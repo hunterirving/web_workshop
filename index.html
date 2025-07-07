@@ -50,18 +50,14 @@
             font-family: monospace;
             font-size: 21px;
             padding: 15px;
+            resize: none;
             overflow: auto;
             background: var(--editor-bg);
             color: var(--text-color);
+            spellcheck: false;
             tab-size: 4;
-            white-space: pre;
+            white-space: nowrap;
             overflow-x: auto;
-        }
-
-        #editor:empty::before {
-            content: attr(data-placeholder);
-            color: #666;
-            pointer-events: none;
         }
 
         #preview {
@@ -101,7 +97,7 @@
 </head>
 <body>
     <div class="editor-pane">
-        <div id="editor" contenteditable="true" spellcheck="false" data-placeholder="Type your HTML, CSS, and JavaScript here..."></div>
+        <textarea id="editor" placeholder="Type your HTML, CSS, and JavaScript here..." spellcheck="false"></textarea>
     </div>
     
     <div class="preview-pane">
@@ -115,7 +111,7 @@
         const storageKey = 'html-lab-content';
 
         function updatePreview() {
-            const code = editor.textContent || editor.innerText || '';
+            const code = editor.value;
             const blob = new Blob([code], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             preview.src = url;
@@ -126,7 +122,7 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem(storageKey, editor.textContent || '');
+                localStorage.setItem(storageKey, editor.value);
             } catch (e) {
                 // Handle localStorage errors silently
                 console.warn('Could not save to localStorage:', e);
@@ -137,7 +133,7 @@
             try {
                 const saved = localStorage.getItem(storageKey);
                 if (saved !== null) {
-                    editor.textContent = saved;
+                    editor.value = saved;
                     return true;
                 }
             } catch (e) {
@@ -153,8 +149,14 @@
             if (e.key === 'Tab') {
                 e.preventDefault();
                 
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                
                 // Insert tab character at cursor position
-                document.execCommand('insertText', false, '\t');
+                this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
+                
+                // Move cursor to after the inserted tab
+                this.selectionStart = this.selectionEnd = start + 1;
                 
                 // Trigger input event to update preview
                 this.dispatchEvent(new Event('input'));
@@ -179,7 +181,7 @@
         });
 
         function saveFile() {
-            const code = editor.textContent || '';
+            const code = editor.value;
             const blob = new Blob([code], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             
