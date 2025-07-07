@@ -7,11 +7,11 @@
     <script type="module">
         import {EditorView, keymap} from "https://esm.sh/@codemirror/view@6"
         import {EditorState} from "https://esm.sh/@codemirror/state@6"
-        import {defaultKeymap} from "https://esm.sh/@codemirror/commands@6"
+        import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
         import {html} from "https://esm.sh/@codemirror/lang-html@6"
         import {oneDark} from "https://esm.sh/@codemirror/theme-one-dark@6"
         
-        window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, html, oneDark};
+        window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, oneDark};
     </script>
     <style>
         :root {
@@ -193,7 +193,7 @@
                 return;
             }
 
-            const {EditorView, EditorState, keymap, defaultKeymap, html, oneDark} = window.CodeMirror;
+            const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, oneDark} = window.CodeMirror;
             
             // Load saved content
             const savedContent = loadFromStorage();
@@ -203,7 +203,7 @@
                 state: EditorState.create({
                     doc: savedContent,
                     extensions: [
-                        keymap.of(defaultKeymap),
+                        keymap.of([indentWithTab, ...defaultKeymap]),
                         html(),
                         oneDark,
                         EditorView.updateListener.of((update) => {
