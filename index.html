@@ -125,7 +125,7 @@
 	</div>
 	
 	<div class="preview-pane">
-		<iframe id="preview" sandbox="allow-scripts"></iframe>
+		<iframe id="preview"></iframe>
 	</div>
 
 	<script type="module">
@@ -136,12 +136,34 @@
 
 		function updatePreview() {
 			const code = editorView.state.doc.toString();
-			const blob = new Blob([code], { type: 'text/html' });
-			const url = URL.createObjectURL(blob);
-			preview.src = url;
 			
-			// Clean up the previous URL to prevent memory leaks
-			setTimeout(() => URL.revokeObjectURL(url), 1000);
+			// Store scroll position before updating
+			let scrollX = 0, scrollY = 0;
+			try {
+				if (preview.contentWindow && preview.contentDocument) {
+					scrollX = preview.contentWindow.scrollX;
+					scrollY = preview.contentWindow.scrollY;
+				}
+			} catch (e) {
+				// Ignore cross-origin errors
+			}
+			
+			// Write HTML directly to iframe document
+			const doc = preview.contentDocument || preview.contentWindow.document;
+			doc.open();
+			doc.write(code);
+			doc.close();
+			
+			// Restore scroll position after a short delay to ensure content is rendered
+			setTimeout(() => {
+				try {
+					if (preview.contentWindow) {
+						preview.contentWindow.scrollTo(scrollX, scrollY);
+					}
+				} catch (e) {
+					// Ignore cross-origin errors
+				}
+			}, 10);
 		}
 
 		function saveToStorage() {
