@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Laboratory</title>
+    <style>
+        :root {
+            --bg-color: #2d2d2d;
+            --text-color: #f8f8f2;
+            --editor-bg: #1e1e1e;
+            --border-color: #222;
+            --header-bg: #333;
+            --header-text: #ccc;
+            --preview-bg: #2d2d2d;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --bg-color: #f0f0f0;
+                --text-color: #333;
+                --editor-bg: #fafafa;
+                --border-color: #ccc;
+                --header-bg: #ddd;
+                --header-text: #666;
+                --preview-bg: white;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: monospace;
+            background: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .editor-pane {
+            width: 50%;
+            height: 100vh;
+            background: var(--preview-bg);
+            border-right: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .preview-pane {
+            width: 50%;
+            height: 100vh;
+            background: var(--preview-bg);
+            position: relative;
+        }
+
+        #editor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-family: monospace;
+            font-size: 21px;
+            padding: 15px;
+            resize: none;
+            overflow: auto;
+            background: var(--editor-bg);
+            color: var(--text-color);
+            spellcheck: false;
+            tab-size: 4;
+        }
+
+        #preview {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            overflow: auto;
+        }
+
+        #editor {
+            padding-top: 15px;
+        }
+
+        #preview {
+            padding-top: 0;
+        }
+
+        /* Hide scrollbars until needed */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--editor-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--header-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-pane">
+        <textarea id="editor" placeholder="Type your HTML, CSS, and JavaScript here..." spellcheck="false"></textarea>
+    </div>
+    
+    <div class="preview-pane">
+        <iframe id="preview" sandbox="allow-scripts"></iframe>
+    </div>
+
+    <script>
+        let updateTimer;
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const storageKey = 'html-lab-content';
+
+        function updatePreview() {
+            const code = editor.value;
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            preview.src = url;
+            
+            // Clean up the previous URL to prevent memory leaks
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function saveToStorage() {
+            try {
+                localStorage.setItem(storageKey, editor.value);
+            } catch (e) {
+                // Handle localStorage errors silently
+                console.warn('Could not save to localStorage:', e);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem(storageKey);
+                if (saved !== null) {
+                    editor.value = saved;
+                    return true;
+                }
+            } catch (e) {
+                // Handle localStorage errors silently
+                console.warn('Could not load from localStorage:', e);
+            }
+            return false;
+        }
+
+
+        // Handle Tab key to insert tab character
+        editor.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                
+                // Insert tab character at cursor position
+                this.value = this.value.substring(0, start) + '\t' + this.value.substring(end);
+                
+                // Move cursor to after the inserted tab
+                this.selectionStart = this.selectionEnd = start + 1;
+                
+                // Trigger input event to update preview
+                this.dispatchEvent(new Event('input'));
+            }
+        });
+
+        // Update preview after 0.5 seconds of no typing
+        editor.addEventListener('input', function() {
+            clearTimeout(updateTimer);
+            updateTimer = setTimeout(updatePreview, 500);
+            
+            // Save to localStorage on every change
+            saveToStorage();
+        });
+
+        // Save functionality with Cmd+S
+        document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+                e.preventDefault();
+                saveFile();
+            }
+        });
+
+        function saveFile() {
+            const code = editor.value;
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize the editor content and render
+        function initialize() {
+            // Always try to load from localStorage regardless of refresh type
+            loadFromStorage();
+            
+            // Focus the editor
+            editor.focus();
+            
+            // Initial render
+            updatePreview();
+        }
+
+        // Initialize when page loads
+        initialize();
+    </script>
+</body>
+</html>
