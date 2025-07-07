@@ -9,9 +9,9 @@
         import {EditorState} from "https://esm.sh/@codemirror/state@6"
         import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
         import {html} from "https://esm.sh/@codemirror/lang-html@6"
-        import {oneDark} from "https://esm.sh/@codemirror/theme-one-dark@6"
+        import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
         
-        window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, oneDark};
+        window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark};
     </script>
     <style>
         :root {
@@ -193,7 +193,7 @@
                 return;
             }
 
-            const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, oneDark} = window.CodeMirror;
+            const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark} = window.CodeMirror;
             
             // Load saved content
             const savedContent = loadFromStorage();
@@ -205,7 +205,7 @@
                     extensions: [
                         keymap.of([indentWithTab, ...defaultKeymap]),
                         html(),
-                        oneDark,
+                        githubDark,
                         EditorView.updateListener.of((update) => {
                             if (update.docChanged) {
                                 clearTimeout(updateTimer);
