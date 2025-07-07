@@ -1,229 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Laboratory</title>
-    <script type="module">
-        import {EditorView, keymap} from "https://esm.sh/@codemirror/view@6"
-        import {EditorState} from "https://esm.sh/@codemirror/state@6"
-        import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
-        import {html} from "https://esm.sh/@codemirror/lang-html@6"
-        import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
-        
-        window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark};
-    </script>
-    <style>
-        :root {
-            --bg-color: #2d2d2d;
-            --text-color: #f8f8f2;
-            --editor-bg: #272822;
-            --preview-bg: #2d2d2d;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HTML Laboratory</title>
+	<script type="module">
+		import {EditorView, keymap} from "https://esm.sh/@codemirror/view@6"
+		import {EditorState} from "https://esm.sh/@codemirror/state@6"
+		import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
+		import {html} from "https://esm.sh/@codemirror/lang-html@6"
+		import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
+		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
+		
+		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit};
+	</script>
+	<style>
+		:root {
+			--bg-color: #2d2d2d;
+			--text-color: #f8f8f2;
+			--editor-bg: #272822;
+			--preview-bg: #2d2d2d;
+		}
 
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        body {
-            font-family: monospace;
-            background: var(--bg-color);
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
+		body {
+			font-family: monospace;
+			background: var(--bg-color);
+			color: var(--text-color);
+			height: 100vh;
+			display: flex;
+			overflow: hidden;
+		}
 
-        .editor-pane {
-            width: 50%;
-            height: 100vh;
-            background: var(--preview-bg);
-            position: relative;
-        }
+		.editor-pane {
+			width: 50%;
+			height: 100vh;
+			background: var(--preview-bg);
+			position: relative;
+		}
 
-        .preview-pane {
-            width: 50%;
-            height: 100vh;
-            background: var(--preview-bg);
-            position: relative;
-        }
+		.preview-pane {
+			width: 50%;
+			height: 100vh;
+			background: var(--preview-bg);
+			position: relative;
+		}
 
-        #editor {
-            width: 100%;
-            height: 100%;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            font-size: 21px;
-        }
+		#editor {
+			width: 100%;
+			height: 100%;
+			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+			font-size: 21px;
+			tab-size: 2;
+		}
 
-        /* CodeMirror styling */
-        .cm-editor {
-            width: 100%;
-            height: 100%;
-            background: var(--editor-bg);
-            color: var(--text-color);
-        }
+		/* CodeMirror styling */
+		.cm-editor {
+			width: 100%;
+			height: 100%;
+			background: var(--editor-bg);
+			color: var(--text-color);
+			tab-size: 2;
+		}
 
-        .cm-content {
-            padding: 15px;
-            font-size: 21px;
-            line-height: 1.5;
-        }
+		.cm-content {
+			padding: 15px;
+			font-size: 21px;
+			line-height: 1.5;
+			tab-size: 2;
+		}
 
-        .cm-focused {
-            outline: none;
-        }
+		.cm-focused {
+			outline: none;
+		}
 
-        #preview {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-            overflow: auto;
-        }
+		/* Force tab size to 2 spaces - override theme defaults */
+		.cm-editor .cm-content,
+		.cm-editor .cm-line,
+		.cm-editor {
+			tab-size: 2 !important;
+			-moz-tab-size: 2 !important;
+		}
 
-        #editor {
-            padding-top: 15px;
-        }
+		#preview {
+			width: 100%;
+			height: 100%;
+			border: none;
+			background: white;
+			overflow: auto;
+		}
 
-        #preview {
-            padding-top: 0;
-        }
+		#preview {
+			padding-top: 0;
+		}
 
-        /* Hide scrollbars until needed */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
+		/* Hide scrollbars until needed */
+		::-webkit-scrollbar {
+			width: 12px;
+		}
 
-        ::-webkit-scrollbar-track {
-            background: var(--editor-bg);
-        }
+		::-webkit-scrollbar-track {
+			background: var(--editor-bg);
+		}
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 6px;
-        }
+		::-webkit-scrollbar-thumb {
+			background: var(--border-color);
+			border-radius: 6px;
+		}
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--header-text);
-        }
-    </style>
+		::-webkit-scrollbar-thumb:hover {
+			background: var(--header-text);
+		}
+	</style>
 </head>
 <body>
-    <div class="editor-pane">
-        <div id="editor"></div>
-    </div>
-    
-    <div class="preview-pane">
-        <iframe id="preview" sandbox="allow-scripts"></iframe>
-    </div>
+	<div class="editor-pane">
+		<div id="editor"></div>
+	</div>
+	
+	<div class="preview-pane">
+		<iframe id="preview" sandbox="allow-scripts"></iframe>
+	</div>
 
-    <script type="module">
-        let updateTimer;
-        let editorView;
-        const preview = document.getElementById('preview');
-        const storageKey = 'html-lab-content';
+	<script type="module">
+		let updateTimer;
+		let editorView;
+		const preview = document.getElementById('preview');
+		const storageKey = 'html-lab-content';
 
-        function updatePreview() {
-            const code = editorView.state.doc.toString();
-            const blob = new Blob([code], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            preview.src = url;
-            
-            // Clean up the previous URL to prevent memory leaks
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
+		function updatePreview() {
+			const code = editorView.state.doc.toString();
+			const blob = new Blob([code], { type: 'text/html' });
+			const url = URL.createObjectURL(blob);
+			preview.src = url;
+			
+			// Clean up the previous URL to prevent memory leaks
+			setTimeout(() => URL.revokeObjectURL(url), 1000);
+		}
 
-        function saveToStorage() {
-            try {
-                const code = editorView.state.doc.toString();
-                localStorage.setItem(storageKey, code);
-            } catch (e) {
-                // Handle localStorage errors silently
-                console.warn('Could not save to localStorage:', e);
-            }
-        }
+		function saveToStorage() {
+			try {
+				const code = editorView.state.doc.toString();
+				localStorage.setItem(storageKey, code);
+			} catch (e) {
+				// Handle localStorage errors silently
+				console.warn('Could not save to localStorage:', e);
+			}
+		}
 
-        function loadFromStorage() {
-            try {
-                const saved = localStorage.getItem(storageKey);
-                if (saved !== null) {
-                    // Handle old format that might be JSON
-                    try {
-                        const data = JSON.parse(saved);
-                        return data.text || data.html || saved;
-                    } catch (parseError) {
-                        return saved;
-                    }
-                }
-            } catch (e) {
-                // Handle localStorage errors silently
-                console.warn('Could not load from localStorage:', e);
-            }
-            return '';
-        }
+		function loadFromStorage() {
+			try {
+				const saved = localStorage.getItem(storageKey);
+				if (saved !== null) {
+					// Handle old format that might be JSON
+					try {
+						const data = JSON.parse(saved);
+						return data.text || data.html || saved;
+					} catch (parseError) {
+						return saved;
+					}
+				}
+			} catch (e) {
+				// Handle localStorage errors silently
+				console.warn('Could not load from localStorage:', e);
+			}
+			return '';
+		}
 
-        // Save functionality with Cmd+S
-        document.addEventListener('keydown', function(e) {
-            if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-                e.preventDefault();
-                saveFile();
-            }
-        });
+		// Save functionality with Cmd+S
+		document.addEventListener('keydown', function(e) {
+			if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+				e.preventDefault();
+				saveFile();
+			}
+		});
 
-        function saveFile() {
-            const code = editorView.state.doc.toString();
-            const blob = new Blob([code], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'index.html';
-            a.click();
-            
-            URL.revokeObjectURL(url);
-        }
+		function saveFile() {
+			const code = editorView.state.doc.toString();
+			const blob = new Blob([code], { type: 'text/html' });
+			const url = URL.createObjectURL(blob);
+			
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'index.html';
+			a.click();
+			
+			URL.revokeObjectURL(url);
+		}
 
-        // Wait for CodeMirror to be available
-        function initializeCodeMirror() {
-            if (!window.CodeMirror) {
-                setTimeout(initializeCodeMirror, 100);
-                return;
-            }
+		// Wait for CodeMirror to be available
+		function initializeCodeMirror() {
+			if (!window.CodeMirror) {
+				setTimeout(initializeCodeMirror, 100);
+				return;
+			}
 
-            const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark} = window.CodeMirror;
-            
-            // Load saved content
-            const savedContent = loadFromStorage();
-            
-            // Create CodeMirror editor
-            editorView = new EditorView({
-                state: EditorState.create({
-                    doc: savedContent,
-                    extensions: [
-                        keymap.of([indentWithTab, ...defaultKeymap]),
-                        html(),
-                        githubDark,
-                        EditorView.updateListener.of((update) => {
-                            if (update.docChanged) {
-                                clearTimeout(updateTimer);
-                                updateTimer = setTimeout(updatePreview, 500);
-                                saveToStorage();
-                            }
-                        })
-                    ]
-                }),
-                parent: document.getElementById('editor')
-            });
+			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit} = window.CodeMirror;
+			
+			// Load saved content
+			const savedContent = loadFromStorage();
+			
+			// Create CodeMirror editor
+			editorView = new EditorView({
+				state: EditorState.create({
+					doc: savedContent,
+					extensions: [
+						keymap.of([indentWithTab, ...defaultKeymap]),
+						html(),
+						githubDark,
+						indentUnit.of("\t"),
+						EditorView.updateListener.of((update) => {
+							if (update.docChanged) {
+								clearTimeout(updateTimer);
+								updateTimer = setTimeout(updatePreview, 500);
+								saveToStorage();
+							}
+						})
+					]
+				}),
+				parent: document.getElementById('editor')
+			});
 
-            // Initial render
-            updatePreview();
-        }
+			// Initial render
+			updatePreview();
+		}
 
-        // Initialize when page loads
-        initializeCodeMirror();
-    </script>
+		// Initialize when page loads
+		initializeCodeMirror();
+	</script>
 </body>
 </html>
