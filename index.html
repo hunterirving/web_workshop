@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML Laboratory</title>
-    <link rel="stylesheet" href="prism.css">
     <style>
         :root {
             --bg-color: #2d2d2d;
@@ -60,11 +59,6 @@
             display: block;
             line-height: 1.5;
         }
-        
-        /* Override Prism background to match our theme */
-        #editor.language-html {
-            background: var(--editor-bg) !important;
-        }
 
         #editor:empty:before {
             content: attr(data-placeholder);
@@ -108,7 +102,7 @@
 </head>
 <body>
     <div class="editor-pane">
-        <code id="editor" class="language-html" contenteditable="true" spellcheck="false" data-placeholder="Type your HTML, CSS, and JavaScript here..."></code>
+        <div id="editor" contenteditable="true" spellcheck="false" data-placeholder="Type your HTML, CSS, and JavaScript here..."></div>
     </div>
     
     <div class="preview-pane">
@@ -133,7 +127,12 @@
 
         function saveToStorage() {
             try {
-                localStorage.setItem(storageKey, editor.textContent);
+                // Save both the inner HTML (for whitespace preservation) and text content
+                const data = {
+                    html: editor.innerHTML,
+                    text: editor.textContent
+                };
+                localStorage.setItem(storageKey, JSON.stringify(data));
             } catch (e) {
                 // Handle localStorage errors silently
                 console.warn('Could not save to localStorage:', e);
@@ -144,7 +143,18 @@
             try {
                 const saved = localStorage.getItem(storageKey);
                 if (saved !== null) {
-                    editor.textContent = saved;
+                    try {
+                        // Try to parse as JSON first (new format)
+                        const data = JSON.parse(saved);
+                        if (data.html) {
+                            editor.innerHTML = data.html;
+                        } else if (data.text) {
+                            editor.textContent = data.text;
+                        }
+                    } catch (parseError) {
+                        // Fallback to old format (plain text)
+                        editor.textContent = saved;
+                    }
                     return true;
                 }
             } catch (e) {
@@ -159,38 +169,7 @@
         editor.addEventListener('keydown', function(e) {
             if (e.key === 'Tab') {
                 e.preventDefault();
-                
-                const selection = window.getSelection();
-                if (selection.rangeCount === 0) return;
-                
-                const range = selection.getRangeAt(0);
-                
-                // Get current cursor position in plain text
-                const cursorPos = getCaretOffset(editor, range.startContainer, range.startOffset);
-                
-                // Get the plain text content
-                const plainText = editor.textContent;
-                
-                // Insert tab at cursor position
-                const newText = plainText.substring(0, cursorPos) + '\t' + plainText.substring(cursorPos);
-                
-                // Update the plain text content first
-                editor.textContent = newText;
-                
-                // Store the new content as last highlighted to prevent immediate re-highlighting
-                editor.dataset.lastHighlighted = newText;
-                
-                // Apply syntax highlighting
-                const highlighted = Prism.highlight(newText, Prism.languages.html, 'html');
-                editor.innerHTML = highlighted;
-                
-                // Restore cursor position after the tab
-                setTimeout(() => {
-                    restoreCaretPosition(editor, cursorPos + 1);
-                }, 0);
-                
-                // Trigger input event to update preview
-                this.dispatchEvent(new Event('input'));
+                document.execCommand('insertText', false, '\t');
             }
         });
 
@@ -238,163 +217,6 @@
 
         // Initialize when page loads
         initialize();
-    </script>
-    <script src="prism.js"></script>
-    <script>
-        // Set Prism to manual mode to control highlighting
-        Prism.manual = true;
-        
-        // Function to apply syntax highlighting
-        function applySyntaxHighlighting() {
-            // Don't highlight if editor is not focused to avoid disrupting user
-            if (document.activeElement !== editor) {
-                return;
-            }
-            
-            // Save cursor position before any changes
-            const selection = window.getSelection();
-            let offset = 0;
-            let hasSelection = false;
-            
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                offset = getCaretOffset(editor, range.startContainer, range.startOffset);
-                hasSelection = true;
-            }
-            
-            // Get the current content
-            const code = editor.textContent;
-            
-            // Only apply highlighting if the content has actually changed
-            if (code === editor.dataset.lastHighlighted) {
-                return;
-            }
-            
-            // Apply new highlighting
-            const highlighted = Prism.highlight(code, Prism.languages.html, 'html');
-            
-            // Update content with highlighting
-            editor.innerHTML = highlighted;
-            
-            // Store the last highlighted content
-            editor.dataset.lastHighlighted = code;
-            
-            // Restore cursor position
-            if (hasSelection) {
-                // Use a small timeout to ensure DOM is updated
-                setTimeout(() => {
-                    restoreCaretPosition(editor, offset);
-                }, 0);
-            }
-        }
-        
-        // Helper function to get caret offset
-        function getCaretOffset(root, node, offset) {
-            try {
-                let textOffset = 0;
-                let walker = document.createTreeWalker(
-                    root,
-                    NodeFilter.SHOW_TEXT,
-                    null,
-                    false
-                );
-                
-                let currentNode;
-                while (currentNode = walker.nextNode()) {
-                    if (currentNode === node) {
-                        return textOffset + Math.min(offset, currentNode.textContent.length);
-                    }
-                    textOffset += currentNode.textContent.length;
-                }
-                
-                // If we can't find the node, return the total length
-                return textOffset;
-            } catch (e) {
-                console.warn('Error getting caret offset:', e);
-                return 0;
-            }
-        }
-        
-        // Helper function to restore caret position
-        function restoreCaretPosition(root, offset) {
-            try {
-                let textOffset = 0;
-                let walker = document.createTreeWalker(
-                    root,
-                    NodeFilter.SHOW_TEXT,
-                    null,
-                    false
-                );
-                
-                let currentNode;
-                while (currentNode = walker.nextNode()) {
-                    const nodeLength = currentNode.textContent.length;
-                    if (textOffset + nodeLength >= offset) {
-                        const range = document.createRange();
-                        const selection = window.getSelection();
-                        const nodeOffset = Math.min(Math.max(0, offset - textOffset), nodeLength);
-                        
-                        range.setStart(currentNode, nodeOffset);
-                        range.setEnd(currentNode, nodeOffset);
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                        return true;
-                    }
-                    textOffset += nodeLength;
-                }
-                
-                // If we can't find the exact position, put cursor at the end of the last text node
-                walker = document.createTreeWalker(
-                    root,
-                    NodeFilter.SHOW_TEXT,
-                    null,
-                    false
-                );
-                
-                let lastNode = null;
-                while (currentNode = walker.nextNode()) {
-                    lastNode = currentNode;
-                }
-                
-                if (lastNode) {
-                    const range = document.createRange();
-                    const selection = window.getSelection();
-                    range.setStart(lastNode, lastNode.textContent.length);
-                    range.setEnd(lastNode, lastNode.textContent.length);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    return true;
-                }
-            } catch (e) {
-                console.warn('Error restoring cursor position:', e);
-            }
-            return false;
-        }
-        
-        // Apply syntax highlighting with debounce
-        let highlightTimer;
-        function scheduleHighlighting() {
-            clearTimeout(highlightTimer);
-            highlightTimer = setTimeout(applySyntaxHighlighting, 150);
-        }
-        
-        // Update the input event listener to include syntax highlighting
-        editor.addEventListener('input', function() {
-            clearTimeout(updateTimer);
-            updateTimer = setTimeout(updatePreview, 500);
-            
-            // Save to localStorage on every change
-            saveToStorage();
-            
-            // Schedule syntax highlighting
-            scheduleHighlighting();
-        });
-        
-        // Apply initial syntax highlighting
-        setTimeout(() => {
-            applySyntaxHighlighting();
-            editor.focus();
-        }, 100);
     </script>
 </body>
 </html>
