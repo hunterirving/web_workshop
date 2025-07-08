@@ -17,10 +17,8 @@
 	</script>
 	<style>
 		:root {
-			--bg-color: #2d2d2d;
 			--text-color: #f8f8f2;
-			--editor-bg: #272822;
-			--preview-bg: #2d2d2d;
+			--editor-bg: #16181b;
 		}
 
 
@@ -42,14 +40,12 @@
 		.editor-pane {
 			width: 50%;
 			height: 100vh;
-			background: var(--preview-bg);
 			position: relative;
 		}
 
 		.preview-pane {
 			width: 50%;
 			height: 100vh;
-			background: var(--preview-bg);
 			position: relative;
 		}
 
@@ -97,27 +93,7 @@
 			overflow: auto;
 		}
 
-		#preview {
-			padding-top: 0;
-		}
 
-		/* Hide scrollbars until needed */
-		::-webkit-scrollbar {
-			width: 12px;
-		}
-
-		::-webkit-scrollbar-track {
-			background: var(--editor-bg);
-		}
-
-		::-webkit-scrollbar-thumb {
-			background: var(--border-color);
-			border-radius: 6px;
-		}
-
-		::-webkit-scrollbar-thumb:hover {
-			background: var(--header-text);
-		}
 	</style>
 </head>
 <body>
