@@ -6,14 +6,14 @@
 	<title>HTML Laboratory</title>
 	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛼</text></svg>">
 	<script type="module">
-		import {EditorView, keymap} from "https://esm.sh/@codemirror/view@6"
+		import {EditorView, keymap, placeholder} from "https://esm.sh/@codemirror/view@6"
 		import {EditorState} from "https://esm.sh/@codemirror/state@6"
 		import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
 		import {html} from "https://esm.sh/@codemirror/lang-html@6"
 		import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
 		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
 		
-		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit};
+		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder};
 	</script>
 	<style>
 		:root {
@@ -64,6 +64,11 @@
 			background: var(--editor-bg);
 			color: var(--text-color);
 			tab-size: 2;
+		}
+
+		.cm-placeholder {
+			color: #666;
+			opacity: 0.6;
 		}
 
 		.cm-content {
@@ -211,7 +216,7 @@
 				return;
 			}
 
-			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit} = window.CodeMirror;
+			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder} = window.CodeMirror;
 			
 			// Load saved content
 			const savedContent = loadFromStorage();
@@ -230,6 +235,7 @@
 						html(),
 						githubDark,
 						indentUnit.of("\t"),
+						placeholder("Build something with HTML..."),
 						EditorView.updateListener.of((update) => {
 							if (update.docChanged) {
 								clearTimeout(updateTimer);
@@ -244,6 +250,9 @@
 
 			// Initial render
 			updatePreview();
+			
+			// Focus the editor
+			editorView.focus();
 		}
 
 		// Initialize when page loads
