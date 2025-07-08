@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>HTML Laboratory</title>
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛼</text></svg>">
 	<script type="module">
 		import {EditorView, keymap} from "https://esm.sh/@codemirror/view@6"
 		import {EditorState} from "https://esm.sh/@codemirror/state@6"
@@ -195,26 +196,38 @@
 			return '';
 		}
 
-		// Save functionality with Cmd+S
-		document.addEventListener('keydown', function(e) {
-			if ((e.metaKey || e.ctrlKey) && e.key === 's') {
-				e.preventDefault();
-				saveFile();
-			}
-		});
-
-		function saveFile() {
+		// Simple file operations
+		window.saveFile = function() {
 			const code = editorView.state.doc.toString();
 			const blob = new Blob([code], { type: 'text/html' });
 			const url = URL.createObjectURL(blob);
-			
 			const a = document.createElement('a');
 			a.href = url;
 			a.download = 'index.html';
 			a.click();
-			
 			URL.revokeObjectURL(url);
-		}
+		};
+
+		window.loadFile = function() {
+			const input = document.createElement('input');
+			input.type = 'file';
+			input.accept = '.html,.htm';
+			input.onchange = function(event) {
+				const file = event.target.files[0];
+				if (!file) return;
+				
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					editorView.dispatch({
+						changes: { from: 0, to: editorView.state.doc.length, insert: e.target.result }
+					});
+					saveToStorage();
+					updatePreview();
+				};
+				reader.readAsText(file);
+			};
+			input.click();
+		};
 
 		// Wait for CodeMirror to be available
 		function initializeCodeMirror() {
@@ -233,7 +246,12 @@
 				state: EditorState.create({
 					doc: savedContent,
 					extensions: [
-						keymap.of([indentWithTab, ...defaultKeymap]),
+						keymap.of([
+							{key: "Mod-o", run: () => { window.loadFile(); return true; }},
+							{key: "Mod-s", run: () => { window.saveFile(); return true; }},
+							indentWithTab, 
+							...defaultKeymap
+						]),
 						html(),
 						githubDark,
 						indentUnit.of("\t"),
