@@ -1,15 +1,15 @@
 # HTML Laboratory 🛼
 
 Craft handmade websites in their natural habitat (your web browser).
-<center><img src="images/pika_construction.gif"></center>
+<img src="images/pika_construction.gif">
 
 ## Usage
 
-1. Open `index.html` in your browser (click <a href="https://hunterirving.github.io/html_laboratory/">here</a>)
+1. Open `index.html` in your web browser (or <a href="https://hunterirving.github.io/html_laboratory/">click here</a>)
 2. Start typing HTML in the editor pane
     - The preview pane will rerender when you're done typing
     - Your work is automatically saved and restored when you reload the page
-3. Press `⌘+S` to export your work as an HTML file (`⌘+O` to reopen exported files)
+3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to reopen exported files)
 
 ## Technologies Used
 
