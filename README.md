@@ -1,6 +1,7 @@
 # HTML Laboratory 🛼
 
 Craft handmade websites in their natural habitat (your web browser).
+
 <img src="images/pika_construction.gif">
 
 ## Usage
