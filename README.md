@@ -5,7 +5,7 @@ Craft handmade websites in their natural habitat (your web browser).
 
 ## Usage
 
-1. Open `index.html` in your browser (click here)
+1. Open `index.html` in your browser (click <a href="https://hunterirving.github.io/html_laboratory/">here</a>)
 2. Start typing HTML in the editor pane
     - The preview pane will rerender when you're done typing
     - Your work is automatically saved and restored when you reload the page
@@ -18,7 +18,7 @@ Craft handmade websites in their natural habitat (your web browser).
 
 ## License
 
-GPLv3 (see LICENSE for details).
+GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
 ## Contributing
 
