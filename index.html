@@ -90,6 +90,11 @@
 			-moz-tab-size: 2 !important;
 		}
 
+		/* Disable overscroll on all CodeMirror elements */
+		.cm-editor, .cm-content, .cm-scroller, .cm-scrollElement {
+			overscroll-behavior: none !important;
+		}
+
 		#preview {
 			width: 100%;
 			height: 100%;
@@ -133,6 +138,12 @@
 			const doc = preview.contentDocument || preview.contentWindow.document;
 			doc.open();
 			doc.write(code);
+			
+			// Inject CSS to disable overscroll in iframe content
+			const style = doc.createElement('style');
+			style.textContent = `* { overscroll-behavior: none !important; }`;
+			doc.head.appendChild(style);
+			
 			doc.close();
 			
 			// Restore scroll position after a short delay to ensure content is rendered
