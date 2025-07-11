@@ -1,4 +1,4 @@
-# HTML Laboratory 🛼
+# Web Workshop 🛼
 
 Craft handmade websites in their natural habitat (your web browser).
 
@@ -6,7 +6,7 @@ Craft handmade websites in their natural habitat (your web browser).
 
 ## Usage
 
-1. Open `index.html` in your web browser (or <a href="https://hunterirving.github.io/html_laboratory/">click here</a>)
+1. Open `index.html` in your web browser (or <a href="https://hunterirving.github.io/web_workshop/">click here</a>)
 2. Start typing HTML in the editor pane
     - The preview pane will rerender when you're done typing
     - Your work is automatically saved and restored when you reload the page
