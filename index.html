@@ -103,6 +103,25 @@
 			overflow: auto;
 		}
 
+		/* Vertical layout for narrow screens (height > width) */
+		@media (max-aspect-ratio: 1/1) {
+			body {
+				flex-direction: column;
+			}
+			
+			.editor-pane {
+				width: 100%;
+				height: 50vh;
+				order: 2;
+			}
+			
+			.preview-pane {
+				width: 100%;
+				height: 50vh;
+				order: 1;
+			}
+		}
+
 	</style>
 </head>
 <body>
