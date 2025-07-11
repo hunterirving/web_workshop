@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-workshop-v3';
+const CACHE_NAME = 'web-workshop-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -44,35 +44,27 @@ async function cacheDirectoryFiles(cache, directories) {
   }
 }
 
-// Function to programmatically cache all images
+// Function to cache all images using the generated manifest
 async function cacheImages(cache) {
-  const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'];
-  
   try {
-    const response = await fetch('/images/');
+    const response = await fetch('/image-manifest.json');
     if (response.ok) {
-      const html = await response.text();
-      const imagePattern = new RegExp(`href="([^"]*\\.(${imageExtensions.join('|')}))"`, 'gi');
-      const links = html.match(imagePattern);
+      const manifest = await response.json();
+      console.log(`Caching ${manifest.total_images} images from manifest`);
       
-      if (links) {
-        const imageFiles = links.map(link => {
-          const match = link.match(/href="([^"]*)"/);
-          return match ? '/images/' + match[1] : null;
-        }).filter(Boolean);
-        
-        for (const imageFile of imageFiles) {
-          try {
-            await cache.add(imageFile);
-            console.log(`Cached image: ${imageFile}`);
-          } catch (e) {
-            console.log(`Failed to cache image ${imageFile}:`, e);
-          }
+      for (const imagePath of manifest.images) {
+        try {
+          await cache.add(imagePath);
+          console.log(`Cached image: ${imagePath}`);
+        } catch (e) {
+          console.log(`Failed to cache image ${imagePath}:`, e);
         }
       }
+    } else {
+      console.log('No image manifest found, skipping image caching');
     }
   } catch (e) {
-    console.log('Failed to cache images directory:', e);
+    console.log('Failed to load image manifest:', e);
   }
 }
 
