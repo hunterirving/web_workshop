@@ -275,6 +275,13 @@
 								updateTimer = setTimeout(updatePreview, 750);
 								saveToStorage();
 							}
+						}),
+						// Disable text correction and autocomplete
+						EditorView.contentAttributes.of({
+							'autocomplete': 'off',
+							'autocorrect': 'off',
+							'autocapitalize': 'off',
+							'spellcheck': 'false'
 						})
 					]
 				}),
