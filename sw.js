@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-workshop-v2';
+const CACHE_NAME = 'web-workshop-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -44,6 +44,38 @@ async function cacheDirectoryFiles(cache, directories) {
   }
 }
 
+// Function to programmatically cache all images
+async function cacheImages(cache) {
+  const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'];
+  
+  try {
+    const response = await fetch('/images/');
+    if (response.ok) {
+      const html = await response.text();
+      const imagePattern = new RegExp(`href="([^"]*\\.(${imageExtensions.join('|')}))"`, 'gi');
+      const links = html.match(imagePattern);
+      
+      if (links) {
+        const imageFiles = links.map(link => {
+          const match = link.match(/href="([^"]*)"/);
+          return match ? '/images/' + match[1] : null;
+        }).filter(Boolean);
+        
+        for (const imageFile of imageFiles) {
+          try {
+            await cache.add(imageFile);
+            console.log(`Cached image: ${imageFile}`);
+          } catch (e) {
+            console.log(`Failed to cache image ${imageFile}:`, e);
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.log('Failed to cache images directory:', e);
+  }
+}
+
 // Install service worker and cache resources
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -63,8 +95,8 @@ self.addEventListener('install', event => {
           }
         }
         
-        // Cache directory files
-        await cacheDirectoryFiles(cache, ['/images/', '/pages/']);
+        // Cache all images programmatically
+        await cacheImages(cache);
       })
       .then(() => self.skipWaiting())
   );
