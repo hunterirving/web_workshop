@@ -1,0 +1,22 @@
+{
+  "name": "Web Workshop",
+  "short_name": "WW",
+  "description": "HTML editor and live preview tool",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#16181b",
+  "theme_color": "#16181b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "images/rollerskate.png",
+      "sizes": "160x160",
+      "type": "image/png"
+    },
+    {
+      "src": "images/rollerskate.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
