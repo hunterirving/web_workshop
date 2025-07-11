@@ -252,7 +252,7 @@
 						EditorView.updateListener.of((update) => {
 							if (update.docChanged) {
 								clearTimeout(updateTimer);
-								updateTimer = setTimeout(updatePreview, 1000);
+								updateTimer = setTimeout(updatePreview, 750);
 								saveToStorage();
 							}
 						})
