@@ -142,7 +142,9 @@
 			// Inject CSS to disable overscroll in iframe content
 			const style = doc.createElement('style');
 			style.textContent = `* { overscroll-behavior: none !important; }`;
-			doc.head.appendChild(style);
+			if (doc.head) {
+				doc.head.appendChild(style);
+			}
 			
 			doc.close();
 			
