@@ -1,8 +1,8 @@
-const CACHE_NAME = 'web-workshop-v4';
+const CACHE_NAME = 'web-workshop-v5';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  '/web_workshop/',
+  '/web_workshop/index.html',
+  '/web_workshop/manifest.json',
   // CodeMirror dependencies
   'https://esm.sh/@codemirror/view@6',
   'https://esm.sh/@codemirror/state@6', 
@@ -47,7 +47,7 @@ async function cacheDirectoryFiles(cache, directories) {
 // Function to cache all images using the generated manifest
 async function cacheImages(cache) {
   try {
-    const response = await fetch('/image-manifest.json');
+    const response = await fetch('/web_workshop/image-manifest.json');
     if (response.ok) {
       const manifest = await response.json();
       console.log(`Caching ${manifest.total_images} images from manifest`);

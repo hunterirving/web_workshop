@@ -28,8 +28,8 @@ def generate_image_manifest():
     
     for file_path in images_dir.iterdir():
         if file_path.is_file() and file_path.suffix.lower() in image_extensions:
-            # Create relative path from web root
-            relative_path = f"/images/{file_path.name}"
+            # Create relative path from web root (GitHub Pages subdirectory)
+            relative_path = f"/web_workshop/images/{file_path.name}"
             image_files.append(relative_path)
     
     # Sort for consistent output
