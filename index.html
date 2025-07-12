@@ -9,12 +9,12 @@
 	<script type="module">
 		import {EditorView, keymap, placeholder} from "https://esm.sh/@codemirror/view@6"
 		import {EditorState} from "https://esm.sh/@codemirror/state@6"
-		import {defaultKeymap, indentWithTab} from "https://esm.sh/@codemirror/commands@6"
+		import {defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap} from "https://esm.sh/@codemirror/commands@6"
 		import {html} from "https://esm.sh/@codemirror/lang-html@6"
 		import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
 		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
 		
-		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder};
+		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap};
 	</script>
 	<style>
 		:root {
@@ -249,7 +249,7 @@
 				return;
 			}
 
-			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder} = window.CodeMirror;
+			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap} = window.CodeMirror;
 			
 			// Load saved content
 			const savedContent = loadFromStorage();
@@ -259,7 +259,11 @@
 				state: EditorState.create({
 					doc: savedContent,
 					extensions: [
+						history(),
 						keymap.of([
+							{key: "Mod-z", run: undo},
+							{key: "Mod-y", run: redo},
+							{key: "Mod-Shift-z", run: redo},
 							{key: "Mod-o", run: () => { window.loadFile(); return true; }},
 							{key: "Mod-s", run: () => { window.saveFile(); return true; }},
 							indentWithTab, 

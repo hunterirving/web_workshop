@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-workshop-v5';
+const CACHE_NAME = 'web-workshop-v6';
 const urlsToCache = [
   '/web_workshop/',
   '/web_workshop/index.html',
