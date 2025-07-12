@@ -14,8 +14,9 @@ Craft handmade websites in their natural habitat (your web browser).
 
 <br>
 
+<i>
 <img src="images/hint.gif" width=60px>
-<i>Try installing Web Workshop as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing">Progressive Web App</a>!</i>
+Try installing Web Workshop as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing">Progressive Web App</a>!</i>
 
 ## Technologies Used
 
@@ -29,7 +30,7 @@ Craft handmade websites in their natural habitat (your web browser).
 GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
 <br>
-<img src="images/bigN.gif" style="max-width:90px">
+<img src="images/bigN.gif" width=110px>
 
 ## Contributing
 
