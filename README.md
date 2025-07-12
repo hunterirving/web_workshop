@@ -12,15 +12,27 @@ Craft handmade websites in their natural habitat (your web browser).
     - Your work is automatically saved and restored when you reload the page
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to reopen exported files)
 
+<br>
+
+<img src="images/hint.gif" style="max-width:60px">
+<i>Try installing Web Workshop as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing">Progressive Web App</a>!</i>
+
 ## Technologies Used
 
 - [CodeMirror 6](https://codemirror.net/) - Code editor with syntax highlighting
 - [GitHub Dark Theme](https://github.com/fsegurai/codemirror-themes) - Dark theme for CodeMirror
 
+<img src="images/bright_idea.gif">
+
 ## License
 
 GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
+<br>
+<img src="images/bigN.gif" style="max-width:90px">
+
 ## Contributing
 
 Feel free to open issues or submit pull requests for improvements!
+
+<img src="images/gaia.gif" style="max-width:180px">
