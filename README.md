@@ -14,7 +14,7 @@ Craft handmade websites in their natural habitat (your web browser).
 
 <br>
 
-<img src="images/hint.gif" style="max-width:60px">
+<img src="images/hint.gif" width=60px>
 <i>Try installing Web Workshop as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing">Progressive Web App</a>!</i>
 
 ## Technologies Used
@@ -35,4 +35,4 @@ GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
 Feel free to open issues or submit pull requests for improvements!
 
-<img src="images/gaia.gif" style="max-width:180px">
+<img src="images/gaia.gif" width=180px>
