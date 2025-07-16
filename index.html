@@ -45,6 +45,31 @@
 			position: relative;
 		}
 
+		.page-selector {
+			position: absolute;
+			top: 5px;
+			right: 15px;
+			z-index: 1000;
+			background: rgba(0, 0, 0, 0.2);
+			color: white;
+			border: none;
+			border-radius: 4px;
+			padding: 5px 8px;
+			cursor: pointer;
+			font-size: 14px;
+			font-family: monospace;
+			transition: background-color 0.2s;
+		}
+
+		.page-selector:hover {
+			background: rgba(0, 0, 0, 0.5);
+		}
+
+		.page-selector option {
+			background: #16181b;
+			color: #f8f8f2;
+		}
+
 		.preview-pane {
 			width: 50%;
 			height: 100vh;
@@ -128,6 +153,13 @@
 </head>
 <body>
 	<div class="editor-pane">
+		<select class="page-selector" id="pageSelector" title="Load a page">
+			<option value="">Load an existing page</option>
+			<option value="pages/avocado.html">🥑 Avocado</option>
+			<option value="pages/jennos_picnic_world.html">🧺 Jenno's Picnic World</option>
+			<option value="pages/my_homepage.html">🏠 My Homepage</option>
+			<option value="pages/pizza_heaven.html">🍕 Pizza Heaven</option>
+		</select>
 		<div id="editor"></div>
 	</div>
 	
@@ -140,6 +172,68 @@
 		let editorView;
 		const preview = document.getElementById('preview');
 		const storageKey = 'html-lab-content';
+<<<<<<< Updated upstream
+=======
+		let isFullscreen = false;
+
+		function toggleFullscreen() {
+			const previewPane = document.querySelector('.preview-pane');
+			const editorPane = document.querySelector('.editor-pane');
+			const toggleButton = document.getElementById('fullscreenToggle');
+			
+			isFullscreen = !isFullscreen;
+			
+			if (isFullscreen) {
+				previewPane.classList.add('fullscreen');
+				editorPane.classList.add('hidden');
+				toggleButton.textContent = '⛶';
+				toggleButton.title = 'Exit fullscreen';
+			} else {
+				previewPane.classList.remove('fullscreen');
+				editorPane.classList.remove('hidden');
+				toggleButton.textContent = '⛶';
+				toggleButton.title = 'Toggle fullscreen';
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', function() {
+			const toggleButton = document.getElementById('fullscreenToggle');
+			toggleButton.addEventListener('click', toggleFullscreen);
+			
+			// Add page selector functionality
+			const pageSelector = document.getElementById('pageSelector');
+			pageSelector.addEventListener('change', function() {
+				const selectedPage = this.value;
+				if (selectedPage) {
+					loadPage(selectedPage);
+					// Reset selector to default option
+					this.value = '';
+				}
+			});
+		});
+>>>>>>> Stashed changes
+
+		async function loadPage(pagePath) {
+			try {
+				const response = await fetch(pagePath);
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const content = await response.text();
+				
+				editorView.dispatch({
+					changes: { from: 0, to: editorView.state.doc.length, insert: content }
+				});
+				
+				saveToStorage();
+				updatePreview();
+				
+				editorView.focus();
+			} catch (error) {
+				console.error('Error loading page:', error);
+				alert(`Failed to load page: ${error.message}`);
+			}
+		}
 
 		function updatePreview() {
 			const code = editorView.state.doc.toString();
