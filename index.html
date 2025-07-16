@@ -182,7 +182,6 @@
 		const storageKey = 'html-lab-content';
 		let isFullscreen = false;
 
-		// Fullscreen toggle functionality
 		function toggleFullscreen() {
 			const previewPane = document.querySelector('.preview-pane');
 			const editorPane = document.querySelector('.editor-pane');
@@ -203,7 +202,6 @@
 			}
 		}
 
-		// Add event listener for fullscreen toggle
 		document.addEventListener('DOMContentLoaded', function() {
 			const toggleButton = document.getElementById('fullscreenToggle');
 			toggleButton.addEventListener('click', toggleFullscreen);
