@@ -172,34 +172,8 @@
 		let editorView;
 		const preview = document.getElementById('preview');
 		const storageKey = 'html-lab-content';
-<<<<<<< Updated upstream
-=======
-		let isFullscreen = false;
-
-		function toggleFullscreen() {
-			const previewPane = document.querySelector('.preview-pane');
-			const editorPane = document.querySelector('.editor-pane');
-			const toggleButton = document.getElementById('fullscreenToggle');
-			
-			isFullscreen = !isFullscreen;
-			
-			if (isFullscreen) {
-				previewPane.classList.add('fullscreen');
-				editorPane.classList.add('hidden');
-				toggleButton.textContent = '⛶';
-				toggleButton.title = 'Exit fullscreen';
-			} else {
-				previewPane.classList.remove('fullscreen');
-				editorPane.classList.remove('hidden');
-				toggleButton.textContent = '⛶';
-				toggleButton.title = 'Toggle fullscreen';
-			}
-		}
 
 		document.addEventListener('DOMContentLoaded', function() {
-			const toggleButton = document.getElementById('fullscreenToggle');
-			toggleButton.addEventListener('click', toggleFullscreen);
-			
 			// Add page selector functionality
 			const pageSelector = document.getElementById('pageSelector');
 			pageSelector.addEventListener('change', function() {
@@ -211,7 +185,6 @@
 				}
 			});
 		});
->>>>>>> Stashed changes
 
 		async function loadPage(pagePath) {
 			try {
