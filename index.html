@@ -279,6 +279,9 @@
 				doc.head.appendChild(style);
 			}
 			
+			// Create fullscreen toggle button immediately
+			createFullscreenToggle();
+			
 			doc.close();
 			
 			// Restore scroll position after a short delay to ensure content is rendered
@@ -290,8 +293,6 @@
 				} catch (e) {
 					// Ignore cross-origin errors
 				}
-				// Create fullscreen toggle button after content is rendered
-				createFullscreenToggle();
 			}, 10);
 		}
 
@@ -392,7 +393,7 @@
 						EditorView.updateListener.of((update) => {
 							if (update.docChanged) {
 								clearTimeout(updateTimer);
-								updateTimer = setTimeout(updatePreview, 750);
+								updateTimer = setTimeout(updatePreview, 600);
 								saveToStorage();
 							}
 						}),
