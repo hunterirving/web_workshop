@@ -1,9 +1,9 @@
-name: Generate Image Manifest
+name: Generate Resource Manifest
 
 on:
   push:
     branches: [ main ]
-    paths: [ 'images/**' ]  # Only run when images are added/changed
+    paths: [ 'images/**', 'resources/**' ]  # Run when images or resources are added/changed
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -23,8 +23,8 @@ jobs:
       with:
         python-version: '3.x'
     
-    - name: Generate image manifest
-      run: python generate_image_manifest.py
+    - name: Generate resource manifest
+      run: python generate_resource_manifest.py
     
     - name: Check for changes
       id: verify-changed-files
@@ -40,6 +40,6 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add image-manifest.json
-        git commit -m "Auto-update image manifest [skip ci]"
+        git add resource-manifest.json
+        git commit -m "Auto-update resource manifest [skip ci]"
         git push
