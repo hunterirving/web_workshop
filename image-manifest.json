@@ -10,6 +10,7 @@
     "/web_workshop/images/hint.gif",
     "/web_workshop/images/mac.png",
     "/web_workshop/images/mario64.gif",
+    "/web_workshop/images/pastel_square.png",
     "/web_workshop/images/pika_construction.gif",
     "/web_workshop/images/pink_clock.gif",
     "/web_workshop/images/rollerskate.png",
@@ -17,10 +18,11 @@
     "/web_workshop/images/smiley_dancing.gif",
     "/web_workshop/images/smiling_pizza.gif",
     "/web_workshop/images/spinninbrain.gif",
+    "/web_workshop/images/splat.png",
     "/web_workshop/images/sun.png",
     "/web_workshop/images/underconstruction.gif",
     "/web_workshop/images/welcome.gif",
     "/web_workshop/images/windows.gif"
   ],
-  "total_images": 20
+  "total_images": 22
 }
