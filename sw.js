@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-workshop-v7';
+const CACHE_NAME = 'web-workshop-v8';
 const urlsToCache = [
   '/web_workshop/',
   '/web_workshop/index.html',
@@ -45,14 +45,15 @@ async function cacheDirectoryFiles(cache, directories) {
   }
 }
 
-// Function to cache all images using the generated manifest
-async function cacheImages(cache) {
+// Function to cache all resources using the generated manifest
+async function cacheResources(cache) {
   try {
-    const response = await fetch('/web_workshop/image-manifest.json');
+    const response = await fetch('/web_workshop/resource-manifest.json');
     if (response.ok) {
       const manifest = await response.json();
-      console.log(`Caching ${manifest.total_images} images from manifest`);
+      console.log(`Caching ${manifest.total_images} images and ${manifest.total_resources} resources from manifest`);
       
+      // Cache images
       for (const imagePath of manifest.images) {
         try {
           await cache.add(imagePath);
@@ -61,11 +62,21 @@ async function cacheImages(cache) {
           console.log(`Failed to cache image ${imagePath}:`, e);
         }
       }
+      
+      // Cache resources
+      for (const resourcePath of manifest.resources) {
+        try {
+          await cache.add(resourcePath);
+          console.log(`Cached resource: ${resourcePath}`);
+        } catch (e) {
+          console.log(`Failed to cache resource ${resourcePath}:`, e);
+        }
+      }
     } else {
-      console.log('No image manifest found, skipping image caching');
+      console.log('No resource manifest found, skipping resource caching');
     }
   } catch (e) {
-    console.log('Failed to load image manifest:', e);
+    console.log('Failed to load resource manifest:', e);
   }
 }
 
@@ -88,8 +99,8 @@ self.addEventListener('install', event => {
           }
         }
         
-        // Cache all images programmatically
-        await cacheImages(cache);
+        // Cache all resources programmatically
+        await cacheResources(cache);
       })
       .then(() => self.skipWaiting())
   );

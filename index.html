@@ -23,7 +23,6 @@
 			--editor-bg: #16181b;
 		}
 
-
 		* {
 			margin: 0;
 			padding: 0;
@@ -54,20 +53,38 @@
 		.fullscreen-toggle {
 			position: absolute;
 			top: 5px;
-			left: 5px;
-			z-index: 1000;
+			right: 5px;
+			z-index: 10000;
 			background: rgba(0, 0, 0, 0.2);
 			color: white;
 			border: none;
 			border-radius: 4px;
-			padding: 5px 8px;
+			width: 32px;
+			height: 32px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 			cursor: pointer;
-			font-size: 16px;
 			transition: background-color 0.2s;
+			box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+		}
+
+		.fullscreen-toggle.has-scrollbar {
+			right: calc(5px + env(scrollbar-width, 15px));
 		}
 
 		.fullscreen-toggle:hover {
-			background: rgba(0, 0, 0, 0.5);
+			background: rgba(0, 0, 0, 0.35);
+		}
+
+		.fullscreen-toggle img {
+			filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+			opacity: 0.8;
+			transition: opacity 0.2s;
+		}
+
+		.fullscreen-toggle:hover img {
+			opacity: 1;
 		}
 
 		.preview-pane.fullscreen {
@@ -78,11 +95,6 @@
 			height: 100vh;
 			z-index: 9999;
 			background: white;
-		}
-
-		.preview-pane.fullscreen .fullscreen-toggle {
-			top: 20px;
-			left: 20px;
 		}
 
 		/* Hide editor when preview is fullscreen */
@@ -171,7 +183,9 @@
 	</div>
 	
 	<div class="preview-pane">
-		<button class="fullscreen-toggle" id="fullscreenToggle" title="Toggle fullscreen">⛶</button>
+		<button class="fullscreen-toggle" id="fullscreenToggle" title="Toggle fullscreen">
+			<img src="resources/fullscreen.svg" width="20" height="20" alt="Fullscreen">
+		</button>
 		<iframe id="preview"></iframe>
 	</div>
 
@@ -192,12 +206,10 @@
 			if (isFullscreen) {
 				previewPane.classList.add('fullscreen');
 				editorPane.classList.add('hidden');
-				toggleButton.textContent = '⛶';
 				toggleButton.title = 'Exit fullscreen';
 			} else {
 				previewPane.classList.remove('fullscreen');
 				editorPane.classList.remove('hidden');
-				toggleButton.textContent = '⛶';
 				toggleButton.title = 'Toggle fullscreen';
 			}
 		}
@@ -206,6 +218,19 @@
 			const toggleButton = document.getElementById('fullscreenToggle');
 			toggleButton.addEventListener('click', toggleFullscreen);
 		});
+
+		function updateScrollbarDetection() {
+			const toggleButton = document.getElementById('fullscreenToggle');
+			try {
+				if (preview.contentDocument && preview.contentDocument.body) {
+					const body = preview.contentDocument.body;
+					const hasScrollbar = body.scrollHeight > preview.clientHeight;
+					toggleButton.classList.toggle('has-scrollbar', hasScrollbar);
+				}
+			} catch (e) {
+				// Ignore cross-origin errors
+			}
+		}
 
 		function updatePreview() {
 			const code = editorView.state.doc.toString();
@@ -244,6 +269,8 @@
 				} catch (e) {
 					// Ignore cross-origin errors
 				}
+				// Check for scrollbar after content is rendered
+				updateScrollbarDetection();
 			}, 10);
 		}
 

@@ -26,5 +26,10 @@
     "/web_workshop/images/welcome.gif",
     "/web_workshop/images/windows.gif"
   ],
-  "total_images": 24
+  "resources": [
+    "/web_workshop/resources/fullscreen.svg"
+  ],
+  "total_files": 23,
+  "total_images": 22,
+  "total_resources": 1
 }
