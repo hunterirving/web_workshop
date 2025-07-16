@@ -70,7 +70,13 @@
 		}
 
 		.fullscreen-toggle.has-scrollbar {
-			right: calc(5px + env(scrollbar-width, 0px));
+			right: calc(5px + env(scrollbar-width, 15px));
+		}
+
+		@media (pointer: none), (pointer: coarse) {
+			.fullscreen-toggle.has-scrollbar {
+				right: 5px;
+			}
 		}
 
 		.fullscreen-toggle:hover {
