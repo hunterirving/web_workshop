@@ -230,7 +230,10 @@
 			// Write HTML directly to iframe document
 			const doc = preview.contentDocument || preview.contentWindow.document;
 			doc.open();
-			doc.write(code);
+			
+			// Ensure we have a proper HTML document structure for the button
+			const htmlContent = code.trim() || '<!DOCTYPE html><html><head></head><body></body></html>';
+			doc.write(htmlContent);
 			
 			// Inject CSS to disable overscroll and add fullscreen toggle styles
 			const style = doc.createElement('style');
