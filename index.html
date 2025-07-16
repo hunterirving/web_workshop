@@ -256,18 +256,20 @@
 					box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 				}
 
-				.iframe-fullscreen-toggle:hover {
-					background: rgba(0, 0, 0, 0.35);
-				}
-
 				.iframe-fullscreen-toggle img {
 					filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
 					opacity: 0.8;
 					transition: opacity 0.2s;
 				}
 
-				.iframe-fullscreen-toggle:hover img {
-					opacity: 1;
+				@media (hover: hover) and (pointer: fine) {
+					.iframe-fullscreen-toggle:hover {
+						background: rgba(0, 0, 0, 0.35);
+					}
+
+					.iframe-fullscreen-toggle:hover img {
+						opacity: 1;
+					}
 				}
 			`;
 			if (doc.head) {
