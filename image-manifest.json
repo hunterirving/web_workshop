@@ -5,8 +5,10 @@
     "/web_workshop/images/bright_idea.gif",
     "/web_workshop/images/calamar.gif",
     "/web_workshop/images/cd.gif",
+    "/web_workshop/images/coffee.png",
     "/web_workshop/images/email.gif",
     "/web_workshop/images/gaia.gif",
+    "/web_workshop/images/hacking.gif",
     "/web_workshop/images/hint.gif",
     "/web_workshop/images/mac.png",
     "/web_workshop/images/mario64.gif",
@@ -24,5 +26,5 @@
     "/web_workshop/images/welcome.gif",
     "/web_workshop/images/windows.gif"
   ],
-  "total_images": 22
+  "total_images": 24
 }
