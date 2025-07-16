@@ -15,7 +15,6 @@
     "/web_workshop/images/pastel_square.png",
     "/web_workshop/images/pika_construction.gif",
     "/web_workshop/images/pink_clock.gif",
-    "/web_workshop/images/rollerskate.png",
     "/web_workshop/images/scared_mouse.gif",
     "/web_workshop/images/smiley_dancing.gif",
     "/web_workshop/images/smiling_pizza.gif",
@@ -27,6 +26,7 @@
     "/web_workshop/images/windows.gif"
   ],
   "resources": [
-    "/web_workshop/resources/fullscreen.svg"
+    "/web_workshop/resources/fullscreen.svg",
+    "/web_workshop/resources/rollerskate.png"
   ]
 }
