@@ -51,7 +51,7 @@ async function cacheResources(cache) {
     const response = await fetch('/web_workshop/resource-manifest.json');
     if (response.ok) {
       const manifest = await response.json();
-      console.log(`Caching ${manifest.total_images} images and ${manifest.total_resources} resources from manifest`);
+      console.log(`Caching ${manifest.images.length} images and ${manifest.resources.length} resources from manifest`);
       
       // Cache images
       for (const imagePath of manifest.images) {
