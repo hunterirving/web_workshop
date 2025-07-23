@@ -68,36 +68,50 @@
 		}
 		
 		.control-pad {
-			display: inline-block;
-			position: relative;
-			width: 144px;
-			height: 144px;
+			display: inline-flex;
+			flex-direction: column;
+			gap: 0;
+		}
+		
+		.control-row {
+			display: flex;
+			gap: 0;
+		}
+		
+		.control-cell {
+			width: 48px;
+			height: 48px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 		}
 		
 		.control-btn {
-			position: absolute;
-			width: 48px;
-			height: 48px;
+			width: 100%;
+			height: 100%;
 			font-size: 48px;
 			cursor: pointer;
 			user-select: none;
 			touch-action: manipulation;
-			line-height: 48px;
-			text-align: center;
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			border: none;
+			background: none;
+			position: relative;
 		}
 		
 		.control-btn:active {
 			opacity: 0.6;
 		}
 		
-		#upBtn { top: 0; left: 48px; }
-		#downBtn { bottom: 0; left: 48px; }
-		#leftBtn { top: 48px; left: 0; }
-		#rightBtn { top: 48px; right: 0; }
-		#centerBtn { top: 48px; left: 48px; display: none; }
+		.control-btn.hidden {
+			visibility: hidden;
+		}
+		
+		.control-btn.show {
+			visibility: visible;
+		}
 		
 		#mobileGameOver, #mobileStartHint {
 			font-size: 20px;
@@ -164,11 +178,21 @@
 	
 	<div id="mobileControls">
 		<div class="control-pad">
-			<div class="control-btn" id="upBtn">🔼</div>
-			<div class="control-btn" id="leftBtn">◀️</div>
-			<div class="control-btn" id="rightBtn">▶️</div>
-			<div class="control-btn" id="downBtn">🔽</div>
-			<div class="control-btn" id="centerBtn">🟢</div>
+			<div class="control-row">
+				<div class="control-cell"><div class="control-btn hidden"></div></div>
+				<div class="control-cell"><button class="control-btn" id="upBtn">🔼</button></div>
+				<div class="control-cell"><div class="control-btn hidden"></div></div>
+			</div>
+			<div class="control-row">
+				<div class="control-cell"><button class="control-btn" id="leftBtn">◀️</button></div>
+				<div class="control-cell"><button class="control-btn show" id="centerBtn">🟢</button></div>
+				<div class="control-cell"><button class="control-btn" id="rightBtn">▶️</button></div>
+			</div>
+			<div class="control-row">
+				<div class="control-cell"><div class="control-btn hidden"></div></div>
+				<div class="control-cell"><button class="control-btn" id="downBtn">🔽</button></div>
+				<div class="control-cell"><div class="control-btn hidden"></div></div>
+			</div>
 		</div>
 		<div id="mobileGameOver"></div>
 		<div id="mobileStartHint">Press 🟢 to start!</div>
@@ -337,11 +361,12 @@
 			const centerBtn = document.getElementById('centerBtn');
 			const mobileGameOver = document.getElementById('mobileGameOver');
 			if (centerBtn) {
-				centerBtn.textContent = '🆕';
-				centerBtn.style.display = 'block';
+				centerBtn.textContent = '🟢';
+				centerBtn.classList.add('show');
+				centerBtn.classList.remove('hidden');
 			}
 			if (mobileGameOver) {
-				mobileGameOver.innerHTML = 'Game Over!<br>Press 🆕 to restart';
+				mobileGameOver.innerHTML = 'Game Over!<br>Press 🟢 to restart';
 				mobileGameOver.style.display = 'block';
 			}
 			
@@ -378,7 +403,8 @@
 			// Hide center button
 			const centerBtn = document.getElementById('centerBtn');
 			if (centerBtn) {
-				centerBtn.style.display = 'none';
+				centerBtn.classList.add('hidden');
+				centerBtn.classList.remove('show');
 			}
 			
 			updateBoard();
@@ -489,8 +515,10 @@
 		// Show initial start hints and button
 		document.getElementById('startHint').style.display = 'block';
 		document.getElementById('mobileStartHint').style.display = 'block';
-		document.getElementById('centerBtn').style.display = 'block';
-		document.getElementById('centerBtn').textContent = '🟢';
+		const centerBtn = document.getElementById('centerBtn');
+		centerBtn.classList.add('show');
+		centerBtn.classList.remove('hidden');
+		centerBtn.textContent = '🟢';
 	</script>
 </body>
 </html>
