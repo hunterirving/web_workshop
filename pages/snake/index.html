@@ -124,10 +124,10 @@
 			<div class="control-btn" id="leftBtn">◀️</div>
 			<div class="control-btn" id="rightBtn">▶️</div>
 			<div class="control-btn" id="downBtn">🔽</div>
-			<div class="control-btn" id="centerBtn">❇️</div>
+			<div class="control-btn" id="centerBtn">🆕</div>
 		</div>
 		<div id="mobileGameOver"></div>
-		<div id="mobileStartHint">Press ❇️ to start!</div>
+		<div id="mobileStartHint">Press 🆕 to start!</div>
 	</div>
 
 	<script>
@@ -252,11 +252,11 @@
 			const centerBtn = document.getElementById('centerBtn');
 			const mobileGameOver = document.getElementById('mobileGameOver');
 			if (centerBtn) {
-				centerBtn.textContent = '🔄';
+				centerBtn.textContent = '🆕';
 				centerBtn.style.display = 'block';
 			}
 			if (mobileGameOver) {
-				mobileGameOver.innerHTML = 'Game Over!<br>Press 🔄 to restart';
+				mobileGameOver.innerHTML = 'Game Over!<br>Press 🆕 to restart';
 				mobileGameOver.style.display = 'block';
 			}
 			
@@ -400,7 +400,7 @@
 		document.getElementById('startHint').style.display = 'block';
 		document.getElementById('mobileStartHint').style.display = 'block';
 		document.getElementById('centerBtn').style.display = 'block';
-		document.getElementById('centerBtn').textContent = '❇️';
+		document.getElementById('centerBtn').textContent = '🆕';
 	</script>
 </body>
 </html>
