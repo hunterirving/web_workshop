@@ -113,6 +113,10 @@
 			visibility: visible;
 		}
 		
+		#centerBtn {
+			z-index: 10;
+		}
+		
 		#mobileGameOver, #mobileStartHint {
 			font-size: 20px;
 			color: red;
@@ -483,19 +487,24 @@
 		});
 		
 		// Mobile controls
-		document.getElementById('upBtn').addEventListener('click', () => {
+		document.getElementById('upBtn').addEventListener('touchstart', (e) => {
+			e.preventDefault();
 			if (gameRunning) setDirection({x: 0, y: -1});
 		});
-		document.getElementById('downBtn').addEventListener('click', () => {
+		document.getElementById('downBtn').addEventListener('touchstart', (e) => {
+			e.preventDefault();
 			if (gameRunning) setDirection({x: 0, y: 1});
 		});
-		document.getElementById('leftBtn').addEventListener('click', () => {
+		document.getElementById('leftBtn').addEventListener('touchstart', (e) => {
+			e.preventDefault();
 			if (gameRunning) setDirection({x: -1, y: 0});
 		});
-		document.getElementById('rightBtn').addEventListener('click', () => {
+		document.getElementById('rightBtn').addEventListener('touchstart', (e) => {
+			e.preventDefault();
 			if (gameRunning) setDirection({x: 1, y: 0});
 		});
-		document.getElementById('centerBtn').addEventListener('click', () => {
+		document.getElementById('centerBtn').addEventListener('touchstart', (e) => {
+			e.preventDefault();
 			if (!gameRunning) {
 				startGame();
 			}
