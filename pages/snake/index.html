@@ -3,12 +3,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<title>SNAKE</title>
 	<style>
+		* {
+			box-sizing: border-box;
+			user-select: none;
+		}
+		
 		body {
 			background-color: white;
 			font-family: Arial, sans-serif;
 			text-align: center;
 			margin: 0;
 			padding: 20px;
+			overflow-x: hidden;
 		}
 		
 		h1 {
@@ -16,18 +22,27 @@
 		}
 		
 		#gameBoard {
-			display: inline-block;
+			display: inline-flex;
+			flex-direction: column;
 			border: 2px solid #333;
-			background-color: white;
-			font-size: 16px;
+			background-color: lightgrey;
 			line-height: 1;
 			font-family: monospace;
-			max-width: 100vw;
 			overflow: hidden;
 		}
 		
 		.row {
-			display: block;
+			display: flex;
+			margin: 0;
+			padding: 0;
+			gap: 0;
+		}
+		
+		.cell {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
 			margin: 0;
 			padding: 0;
 		}
@@ -95,6 +110,35 @@
 			color: #333;
 		}
 		
+		@media (max-width: 400px) {
+			body {
+				padding: 10px;
+			}
+			
+			h1 {
+				font-size: 24px;
+				margin: 10px 0;
+			}
+			
+			#score, #highScore {
+				font-size: 16px;
+			}
+		}
+		
+		@media (max-width: 360px) {
+			body {
+				padding: 5px;
+			}
+			
+			h1 {
+				font-size: 20px;
+			}
+			
+			#score, #highScore {
+				font-size: 14px;
+			}
+		}
+		
 		@media (pointer: none), (pointer: coarse) {
 			#mobileControls {
 				display: block;
@@ -124,10 +168,10 @@
 			<div class="control-btn" id="leftBtn">◀️</div>
 			<div class="control-btn" id="rightBtn">▶️</div>
 			<div class="control-btn" id="downBtn">🔽</div>
-			<div class="control-btn" id="centerBtn">🆕</div>
+			<div class="control-btn" id="centerBtn">🟢</div>
 		</div>
 		<div id="mobileGameOver"></div>
-		<div id="mobileStartHint">Press 🆕 to start!</div>
+		<div id="mobileStartHint">Press 🟢 to start!</div>
 	</div>
 
 	<script>
@@ -188,6 +232,42 @@
 			board[apple.y][apple.x] = APPLE;
 		}
 		
+		function calculateCellSize() {
+			const padding = window.innerWidth <= 360 ? 10 : (window.innerWidth <= 400 ? 20 : 40);
+			const borderWidth = 4; // 2px border on each side
+			const availableWidth = window.innerWidth - padding - borderWidth;
+			const maxPossibleSize = Math.floor(availableWidth / BOARD_SIZE);
+			
+			// Use smaller, tighter cell sizes
+			let cellSize;
+			if (window.innerWidth <= 360) {
+				cellSize = Math.min(maxPossibleSize, 12);
+			} else if (window.innerWidth <= 400) {
+				cellSize = Math.min(maxPossibleSize, 14);
+			} else {
+				cellSize = Math.min(maxPossibleSize, 16);
+			}
+			
+			return Math.max(cellSize, 8); // Minimum cell size
+		}
+		
+		function updateBoardSize() {
+			const cellSize = calculateCellSize();
+			const fontSize = Math.max(Math.floor(cellSize * 0.9), 8);
+			
+			const gameBoard = document.getElementById('gameBoard');
+			gameBoard.style.width = 'auto';
+			gameBoard.style.display = 'inline-flex';
+			gameBoard.style.flexDirection = 'column';
+			
+			const cells = document.querySelectorAll('.cell');
+			cells.forEach(cell => {
+				cell.style.width = cellSize + 'px';
+				cell.style.height = cellSize + 'px';
+				cell.style.fontSize = fontSize + 'px';
+			});
+		}
+		
 		function renderBoard() {
 			const gameBoard = document.getElementById('gameBoard');
 			gameBoard.innerHTML = '';
@@ -196,10 +276,15 @@
 				const row = document.createElement('div');
 				row.className = 'row';
 				for (let x = 0; x < BOARD_SIZE; x++) {
-					row.innerHTML += board[y][x];
+					const cell = document.createElement('div');
+					cell.className = 'cell';
+					cell.textContent = board[y][x];
+					row.appendChild(cell);
 				}
 				gameBoard.appendChild(row);
 			}
+			
+			updateBoardSize();
 		}
 		
 		function moveSnake() {
@@ -390,6 +475,11 @@
 			}
 		});
 		
+		// Handle window resize and orientation changes
+		window.addEventListener('resize', () => {
+			updateBoardSize();
+		});
+		
 		// Initialize game
 		loadHighScore();
 		initBoard();
@@ -400,7 +490,7 @@
 		document.getElementById('startHint').style.display = 'block';
 		document.getElementById('mobileStartHint').style.display = 'block';
 		document.getElementById('centerBtn').style.display = 'block';
-		document.getElementById('centerBtn').textContent = '🆕';
+		document.getElementById('centerBtn').textContent = '🟢';
 	</script>
 </body>
 </html>
