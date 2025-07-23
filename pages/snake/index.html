@@ -1,0 +1,403 @@
+<html>
+<head>
+	<title>SNAKE</title>
+	<style>
+		body {
+			background-color: white;
+			font-family: Arial, sans-serif;
+			text-align: center;
+			margin: 0;
+			padding: 20px;
+		}
+		
+		h1 {
+			margin: 20px 0;
+		}
+		
+		#gameBoard {
+			display: inline-block;
+			border: 2px solid #333;
+			background-color: white;
+			font-size: 16px;
+			line-height: 1;
+			font-family: monospace;
+		}
+		
+		.row {
+			display: block;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#score, #highScore {
+			font-size: 20px;
+			margin: 10px 0;
+		}
+		
+		#gameOver, #startHint {
+			font-size: 24px;
+			color: red;
+			margin: 20px 0;
+		}
+		
+		#startHint {
+			color: #333;
+		}
+		
+		#mobileControls {
+			display: none;
+			margin: 20px 0;
+		}
+		
+		.control-pad {
+			display: inline-block;
+			position: relative;
+			width: 144px;
+			height: 144px;
+		}
+		
+		.control-btn {
+			position: absolute;
+			width: 48px;
+			height: 48px;
+			font-size: 48px;
+			cursor: pointer;
+			user-select: none;
+			touch-action: manipulation;
+			line-height: 48px;
+			text-align: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+		.control-btn:active {
+			opacity: 0.6;
+		}
+		
+		#upBtn { top: 0; left: 48px; }
+		#downBtn { bottom: 0; left: 48px; }
+		#leftBtn { top: 48px; left: 0; }
+		#rightBtn { top: 48px; right: 0; }
+		#centerBtn { top: 48px; left: 48px; display: none; }
+		
+		#mobileGameOver, #mobileStartHint {
+			font-size: 20px;
+			color: red;
+			margin-top: 20px;
+			display: none;
+		}
+		
+		#mobileStartHint {
+			color: #333;
+		}
+		
+		@media (pointer: none), (pointer: coarse) {
+			#mobileControls {
+				display: block;
+			}
+			
+			#gameOver {
+				display: none !important;
+			}
+			
+			#startHint {
+				display: none !important;
+			}
+		}
+	</style>
+</head>
+<body>
+	<h1>SNAKE</h1>
+	<div id="gameBoard"></div>
+	<div id="score">Score: 0</div>
+	<div id="highScore">High Score: 0</div>
+	<div id="gameOver"></div>
+	<div id="startHint">Press Space to start!</div>
+	
+	<div id="mobileControls">
+		<div class="control-pad">
+			<div class="control-btn" id="upBtn">🔼</div>
+			<div class="control-btn" id="leftBtn">◀️</div>
+			<div class="control-btn" id="rightBtn">▶️</div>
+			<div class="control-btn" id="downBtn">🔽</div>
+			<div class="control-btn" id="centerBtn">❇️</div>
+		</div>
+		<div id="mobileGameOver"></div>
+		<div id="mobileStartHint">Press ❇️ to start!</div>
+	</div>
+
+	<script>
+		const BOARD_SIZE = 20;
+		const EMPTY = '⬜';
+		const SNAKE = '🟩';
+		const APPLE = '🟥';
+		
+		let board = [];
+		let snake = [{x: 10, y: 10}];
+		let direction = {x: 0, y: -1};
+		let nextDirection = {x: 0, y: -1};
+		let apple = {x: 5, y: 5};
+		let score = 0;
+		let highScore = 0;
+		let gameRunning = false;
+		let gameStarted = false;
+		let gameSpeed = 200;
+		let gameInterval;
+		
+		function initBoard() {
+			for (let y = 0; y < BOARD_SIZE; y++) {
+				board[y] = [];
+				for (let x = 0; x < BOARD_SIZE; x++) {
+					board[y][x] = EMPTY;
+				}
+			}
+		}
+		
+		function placeApple() {
+			let newApple;
+			do {
+				newApple = {
+					x: Math.floor(Math.random() * BOARD_SIZE),
+					y: Math.floor(Math.random() * BOARD_SIZE)
+				};
+			} while (snake.some(segment => segment.x === newApple.x && segment.y === newApple.y));
+			
+			apple = newApple;
+		}
+		
+		function updateBoard() {
+			// Clear board
+			for (let y = 0; y < BOARD_SIZE; y++) {
+				for (let x = 0; x < BOARD_SIZE; x++) {
+					board[y][x] = EMPTY;
+				}
+			}
+			
+			// Place snake
+			snake.forEach(segment => {
+				if (segment.x >= 0 && segment.x < BOARD_SIZE && segment.y >= 0 && segment.y < BOARD_SIZE) {
+					board[segment.y][segment.x] = SNAKE;
+				}
+			});
+			
+			// Place apple
+			board[apple.y][apple.x] = APPLE;
+		}
+		
+		function renderBoard() {
+			const gameBoard = document.getElementById('gameBoard');
+			gameBoard.innerHTML = '';
+			
+			for (let y = 0; y < BOARD_SIZE; y++) {
+				const row = document.createElement('div');
+				row.className = 'row';
+				for (let x = 0; x < BOARD_SIZE; x++) {
+					row.innerHTML += board[y][x];
+				}
+				gameBoard.appendChild(row);
+			}
+		}
+		
+		function moveSnake() {
+			if (!gameRunning) return;
+			
+			// Use the next direction for movement
+			direction = nextDirection;
+			
+			const head = {
+				x: snake[0].x + direction.x,
+				y: snake[0].y + direction.y
+			};
+			
+			// Check wall collision
+			if (head.x < 0 || head.x >= BOARD_SIZE || head.y < 0 || head.y >= BOARD_SIZE) {
+				gameOver();
+				return;
+			}
+			
+			// Check self collision
+			if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+				gameOver();
+				return;
+			}
+			
+			snake.unshift(head);
+			
+			// Check apple collision
+			if (head.x === apple.x && head.y === apple.y) {
+				score += 10;
+				document.getElementById('score').textContent = `Score: ${score}`;
+				updateHighScore();
+				
+				// Increase speed
+				gameSpeed = Math.max(50, 200 - Math.floor(score / 1));
+				clearInterval(gameInterval);
+				gameInterval = setInterval(gameLoop, gameSpeed);
+				
+				placeApple();
+			} else {
+				snake.pop();
+			}
+		}
+		
+		function gameOver() {
+			gameRunning = false;
+			document.getElementById('gameOver').innerHTML = 'Game Over!<br>Press Space to restart';
+			
+			// Show restart button and mobile message
+			const centerBtn = document.getElementById('centerBtn');
+			const mobileGameOver = document.getElementById('mobileGameOver');
+			if (centerBtn) {
+				centerBtn.textContent = '🔄';
+				centerBtn.style.display = 'block';
+			}
+			if (mobileGameOver) {
+				mobileGameOver.innerHTML = 'Game Over!<br>Press 🔄 to restart';
+				mobileGameOver.style.display = 'block';
+			}
+			
+			clearInterval(gameInterval);
+		}
+		
+		function startGame() {
+			// Reset game state first
+			snake = [{x: 10, y: 10}];
+			direction = {x: 0, y: -1};
+			nextDirection = {x: 0, y: -1};
+			score = 0;
+			gameSpeed = 200;
+			document.getElementById('score').textContent = `Score: ${score}`;
+			
+			// Only place new apple if restarting (not first time)
+			if (score > 0 || gameStarted) {
+				placeApple();
+			}
+
+			gameRunning = true;
+			gameStarted = true;
+			
+			// Hide all hint messages
+			document.getElementById('startHint').style.display = 'none';
+			document.getElementById('mobileStartHint').style.display = 'none';
+			document.getElementById('gameOver').textContent = '';
+			
+			const mobileGameOver = document.getElementById('mobileGameOver');
+			if (mobileGameOver) {
+				mobileGameOver.style.display = 'none';
+			}
+			
+			// Hide center button
+			const centerBtn = document.getElementById('centerBtn');
+			if (centerBtn) {
+				centerBtn.style.display = 'none';
+			}
+			
+			updateBoard();
+			renderBoard();
+			
+			// Start game loop
+			clearInterval(gameInterval);
+			gameInterval = setInterval(gameLoop, gameSpeed);
+		}
+		
+		function loadHighScore() {
+			const saved = localStorage.getItem('snakeHighScore');
+			highScore = saved ? parseInt(saved) : 0;
+			document.getElementById('highScore').textContent = `High Score: ${highScore}`;
+		}
+		
+		function saveHighScore() {
+			localStorage.setItem('snakeHighScore', highScore.toString());
+		}
+		
+		function updateHighScore() {
+			if (score > highScore) {
+				highScore = score;
+				document.getElementById('highScore').textContent = `High Score: ${highScore}`;
+				saveHighScore();
+			}
+		}
+		
+		function gameLoop() {
+			moveSnake();
+			updateBoard();
+			renderBoard();
+		}
+		
+		function setDirection(newDirection) {
+			if (!gameRunning) return;
+			
+			// Allow any direction when snake is only 1 segment long
+			if (snake.length === 1) {
+				nextDirection = newDirection;
+				return;
+			}
+			
+			// Prevent reversing into self by checking current direction
+			if (newDirection.x !== 0 && direction.x !== -newDirection.x) {
+				nextDirection = newDirection;
+			} else if (newDirection.y !== 0 && direction.y !== -newDirection.y) {
+				nextDirection = newDirection;
+			}
+		}
+		
+		document.addEventListener('keydown', (event) => {
+			if (event.code === 'Space') {
+				if (!gameRunning) {
+					startGame();
+				}
+				return;
+			}
+			
+			if (!gameRunning) return;
+			
+			switch(event.code) {
+				case 'ArrowUp':
+					setDirection({x: 0, y: -1});
+					break;
+				case 'ArrowDown':
+					setDirection({x: 0, y: 1});
+					break;
+				case 'ArrowLeft':
+					setDirection({x: -1, y: 0});
+					break;
+				case 'ArrowRight':
+					setDirection({x: 1, y: 0});
+					break;
+			}
+		});
+		
+		// Mobile controls
+		document.getElementById('upBtn').addEventListener('click', () => {
+			if (gameRunning) setDirection({x: 0, y: -1});
+		});
+		document.getElementById('downBtn').addEventListener('click', () => {
+			if (gameRunning) setDirection({x: 0, y: 1});
+		});
+		document.getElementById('leftBtn').addEventListener('click', () => {
+			if (gameRunning) setDirection({x: -1, y: 0});
+		});
+		document.getElementById('rightBtn').addEventListener('click', () => {
+			if (gameRunning) setDirection({x: 1, y: 0});
+		});
+		document.getElementById('centerBtn').addEventListener('click', () => {
+			if (!gameRunning) {
+				startGame();
+			}
+		});
+		
+		// Initialize game
+		loadHighScore();
+		initBoard();
+		updateBoard();
+		renderBoard();
+		
+		// Show initial start hints and button
+		document.getElementById('startHint').style.display = 'block';
+		document.getElementById('mobileStartHint').style.display = 'block';
+		document.getElementById('centerBtn').style.display = 'block';
+		document.getElementById('centerBtn').textContent = '❇️';
+	</script>
+</body>
+</html>
