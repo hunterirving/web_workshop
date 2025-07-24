@@ -234,7 +234,8 @@
 		let board = [];
 		let snake = [{x: 10, y: 10}];
 		let direction = {x: 0, y: -1};
-		let nextDirection = {x: 0, y: -1};
+		let inputBuffer = [];
+		const MAX_INPUT_BUFFER_SIZE = 3;
 		let apple = {x: 5, y: 5};
 		let score = 0;
 		let highScore = 0;
@@ -342,8 +343,10 @@
 		function moveSnake() {
 			if (!gameRunning) return;
 			
-			// Use the next direction for movement
-			direction = nextDirection;
+			// Process next direction from input buffer if available
+			if (inputBuffer.length > 0) {
+				direction = inputBuffer.shift();
+			}
 			
 			const head = {
 				x: snake[0].x + direction.x,
@@ -405,7 +408,7 @@
 			// Reset game state first
 			snake = [{x: 10, y: 10}];
 			direction = {x: 0, y: -1};
-			nextDirection = {x: 0, y: -1};
+			inputBuffer = [];
 			score = 0;
 			gameSpeed = 200;
 			document.getElementById('score').textContent = `Score: ${score}`;
@@ -470,17 +473,23 @@
 		function setDirection(newDirection) {
 			if (!gameRunning) return;
 			
+			// Don't add if buffer is full
+			if (inputBuffer.length >= MAX_INPUT_BUFFER_SIZE) return;
+			
+			// Get the most recent direction (either from buffer or current direction)
+			const lastDirection = inputBuffer.length > 0 ? inputBuffer[inputBuffer.length - 1] : direction;
+			
 			// Allow any direction when snake is only 1 segment long
 			if (snake.length === 1) {
-				nextDirection = newDirection;
+				inputBuffer.push(newDirection);
 				return;
 			}
 			
-			// Prevent reversing into self by checking current direction
-			if (newDirection.x !== 0 && direction.x !== -newDirection.x) {
-				nextDirection = newDirection;
-			} else if (newDirection.y !== 0 && direction.y !== -newDirection.y) {
-				nextDirection = newDirection;
+			// Prevent reversing into self by checking the last direction
+			if (newDirection.x !== 0 && lastDirection.x !== -newDirection.x) {
+				inputBuffer.push(newDirection);
+			} else if (newDirection.y !== 0 && lastDirection.y !== -newDirection.y) {
+				inputBuffer.push(newDirection);
 			}
 		}
 		
