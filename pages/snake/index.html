@@ -171,6 +171,22 @@
 				display: none !important;
 			}
 		}
+		
+		@media (prefers-color-scheme: dark) {
+			body {
+				background-color: #1a1a1a;
+				color: #ffffff;
+			}
+			
+			#gameBoard {
+				border-color: #666;
+				background-color: #2d2d2d;
+			}
+			
+			#startHint, #mobileStartHint {
+				color: #ccc;
+			}
+		}
 	</style>
 </head>
 <body>
@@ -205,9 +221,14 @@
 
 	<script>
 		const BOARD_SIZE = 20;
-		const EMPTY = '⬜';
+		const EMPTY_LIGHT = '⬜';
+		const EMPTY_DARK = '';
 		const SNAKE = '🟩';
 		const APPLE = '🟥';
+		
+		function getEmptySymbol() {
+			return window.matchMedia('(prefers-color-scheme: dark)').matches ? EMPTY_DARK : EMPTY_LIGHT;
+		}
 		
 		let board = [];
 		let snake = [{x: 10, y: 10}];
@@ -225,7 +246,7 @@
 			for (let y = 0; y < BOARD_SIZE; y++) {
 				board[y] = [];
 				for (let x = 0; x < BOARD_SIZE; x++) {
-					board[y][x] = EMPTY;
+					board[y][x] = getEmptySymbol();
 				}
 			}
 		}
@@ -244,9 +265,10 @@
 		
 		function updateBoard() {
 			// Clear board
+			const emptySymbol = getEmptySymbol();
 			for (let y = 0; y < BOARD_SIZE; y++) {
 				for (let x = 0; x < BOARD_SIZE; x++) {
-					board[y][x] = EMPTY;
+					board[y][x] = emptySymbol;
 				}
 			}
 			
