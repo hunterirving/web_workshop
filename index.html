@@ -70,7 +70,6 @@
 			height: 100%;
 			font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 			font-size: 21px;
-			tab-size: 2;
 		}
 
 		/* CodeMirror styling */
@@ -79,7 +78,6 @@
 			height: 100%;
 			background: var(--editor-bg);
 			color: var(--text-color);
-			tab-size: 2;
 		}
 
 		.cm-placeholder {
@@ -91,7 +89,6 @@
 			padding: 15px;
 			font-size: 21px;
 			line-height: 1.5;
-			tab-size: 2;
 		}
 
 		.cm-focused {
@@ -195,7 +192,7 @@
 			// Store scroll position before updating
 			let scrollX = 0, scrollY = 0;
 			try {
-				if (preview.contentWindow && preview.contentDocument) {
+				if (preview.contentWindow?.scrollX !== undefined) {
 					scrollX = preview.contentWindow.scrollX;
 					scrollY = preview.contentWindow.scrollY;
 				}
@@ -244,9 +241,7 @@
 					// Restore scroll position
 					setTimeout(() => {
 						try {
-							if (preview.contentWindow) {
-								preview.contentWindow.scrollTo(scrollX, scrollY);
-							}
+							preview.contentWindow?.scrollTo(scrollX, scrollY);
 						} catch (e) {
 							// Ignore cross-origin errors
 						}
@@ -262,37 +257,24 @@
 
 		function saveToStorage() {
 			try {
-				const code = editorView.state.doc.toString();
-				localStorage.setItem(storageKey, code);
+				localStorage.setItem(storageKey, editorView.state.doc.toString());
 			} catch (e) {
-				// Handle localStorage errors silently
 				console.warn('Could not save to localStorage:', e);
 			}
 		}
 
 		function loadFromStorage() {
 			try {
-				const saved = localStorage.getItem(storageKey);
-				if (saved !== null) {
-					// Handle old format that might be JSON
-					try {
-						const data = JSON.parse(saved);
-						return data.text || data.html || saved;
-					} catch (parseError) {
-						return saved;
-					}
-				}
+				return localStorage.getItem(storageKey) || '';
 			} catch (e) {
-				// Handle localStorage errors silently
 				console.warn('Could not load from localStorage:', e);
+				return '';
 			}
-			return '';
 		}
 
-		// Simple file operations
+		// File operations
 		window.saveFile = function() {
-			const code = editorView.state.doc.toString();
-			const blob = new Blob([code], { type: 'text/html' });
+			const blob = new Blob([editorView.state.doc.toString()], { type: 'text/html' });
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
