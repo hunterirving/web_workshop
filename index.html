@@ -182,36 +182,12 @@
 		}
 
 
-		function createFullscreenToggle() {
-			try {
-				if (!preview.contentDocument) return;
-				
-				const doc = preview.contentDocument;
-				
-				// Remove existing button if it exists
-				const existingButton = doc.getElementById('fullscreenToggle');
-				if (existingButton) {
-					existingButton.remove();
-				}
-				
-				// Create button element
-				const button = doc.createElement('button');
-				button.id = 'fullscreenToggle';
-				button.className = 'iframe-fullscreen-toggle';
-				button.title = 'Toggle fullscreen';
-				button.innerHTML = `<img src="resources/fullscreen.svg" width="20" height="20" alt="Fullscreen">`;
-				
-				// Add click handler
-				button.addEventListener('click', toggleFullscreen);
-				
-				// Append to body
-				if (doc.body) {
-					doc.body.appendChild(button);
-				}
-			} catch (e) {
-				// Ignore cross-origin errors
+		// Listen for messages from iframe
+		window.addEventListener('message', function(event) {
+			if (event.data === 'toggleFullscreen') {
+				toggleFullscreen();
 			}
-		}
+		});
 
 		function updatePreview() {
 			const code = editorView.state.doc.toString();
@@ -227,73 +203,61 @@
 				// Ignore cross-origin errors
 			}
 			
-			// Write HTML directly to iframe document
-			const doc = preview.contentDocument || preview.contentWindow.document;
-			doc.open();
+			// Use srcdoc to create a completely fresh document context
+			preview.srcdoc = code.trim() || '<!DOCTYPE html><html><head></head><body></body></html>';
 			
-			// Ensure we have a proper HTML document structure for the button
-			const htmlContent = code.trim() || '<!DOCTYPE html><html><head></head><body></body></html>';
-			doc.write(htmlContent);
-			
-			// Inject CSS to disable overscroll and add fullscreen toggle styles
-			const style = doc.createElement('style');
-			style.textContent = `
-				* { overscroll-behavior: none !important; }
-				
-				.iframe-fullscreen-toggle {
-					position: fixed;
-					top: 5px;
-					right: 5px;
-					z-index: 10000;
-					background: rgba(0, 0, 0, 0.2);
-					color: white;
-					border: none;
-					border-radius: 4px;
-					width: 32px;
-					height: 32px;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					cursor: pointer;
-					transition: background-color 0.2s;
-					box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-				}
-
-				.iframe-fullscreen-toggle img {
-					filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
-					opacity: 0.8;
-					transition: opacity 0.2s;
-				}
-
-				@media (hover: hover) and (pointer: fine) {
-					.iframe-fullscreen-toggle:hover {
-						background: rgba(0, 0, 0, 0.35);
-					}
-
-					.iframe-fullscreen-toggle:hover img {
-						opacity: 1;
-					}
-				}
-			`;
-			if (doc.head) {
-				doc.head.appendChild(style);
-			}
-			
-			// Create fullscreen toggle button immediately
-			createFullscreenToggle();
-			
-			doc.close();
-			
-			// Restore scroll position after a short delay to ensure content is rendered
-			setTimeout(() => {
+			// Add our functionality after the iframe loads
+			const onLoad = () => {
 				try {
-					if (preview.contentWindow) {
-						preview.contentWindow.scrollTo(scrollX, scrollY);
+					const doc = preview.contentDocument;
+					if (!doc) return;
+					
+					// Add CSS for overscroll and button
+					const style = doc.createElement('style');
+					style.textContent = '* { overscroll-behavior: none !important; } .iframe-fullscreen-toggle { position: fixed; top: 5px; right: 5px; z-index: 10000; background: rgba(0, 0, 0, 0.2); color: white; border: none; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); } .iframe-fullscreen-toggle img { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3)); opacity: 0.8; transition: opacity 0.2s; } @media (hover: hover) and (pointer: fine) { .iframe-fullscreen-toggle:hover { background: rgba(0, 0, 0, 0.35); } .iframe-fullscreen-toggle:hover img { opacity: 1; } }';
+					doc.head.appendChild(style);
+					
+					// Create fullscreen button
+					const existingButton = doc.getElementById('fullscreenToggle');
+					if (existingButton) existingButton.remove();
+					
+					const button = doc.createElement('button');
+					button.id = 'fullscreenToggle';
+					button.className = 'iframe-fullscreen-toggle';
+					button.title = 'Toggle fullscreen';
+					
+					const img = doc.createElement('img');
+					img.src = 'resources/fullscreen.svg';
+					img.width = 20;
+					img.height = 20;
+					img.alt = 'Fullscreen';
+					button.appendChild(img);
+					
+					button.addEventListener('click', function() {
+						parent.postMessage('toggleFullscreen', '*');
+					});
+					
+					if (doc.body) {
+						doc.body.appendChild(button);
 					}
+					
+					// Restore scroll position
+					setTimeout(() => {
+						try {
+							if (preview.contentWindow) {
+								preview.contentWindow.scrollTo(scrollX, scrollY);
+							}
+						} catch (e) {
+							// Ignore cross-origin errors
+						}
+					}, 10);
 				} catch (e) {
 					// Ignore cross-origin errors
 				}
-			}, 10);
+				
+				preview.removeEventListener('load', onLoad);
+			};
+			preview.addEventListener('load', onLoad);
 		}
 
 		function saveToStorage() {
