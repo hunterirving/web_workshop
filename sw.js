@@ -1,4 +1,4 @@
-const CACHE_NAME = 'web-workshop-v8';
+const CACHE_NAME = 'web-workshop-v9';
 const urlsToCache = [
   '/web_workshop/',
   '/web_workshop/index.html',
@@ -10,7 +10,8 @@ const urlsToCache = [
   'https://esm.sh/@codemirror/lang-html@6',
   'https://esm.sh/@fsegurai/codemirror-theme-github-dark',
   'https://esm.sh/@codemirror/language@6',
-  'https://esm.sh/@codemirror/autocomplete@6'
+  'https://esm.sh/@codemirror/autocomplete@6',
+  'https://esm.sh/@codemirror/search@6'
 ];
 
 // Function to discover and cache all files in directories

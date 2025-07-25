@@ -14,8 +14,9 @@
 		import {html} from "https://esm.sh/@codemirror/lang-html@6"
 		import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
 		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
+		import {search, searchKeymap, closeSearchPanel, openSearchPanel} from "https://esm.sh/@codemirror/search@6"
 		
-		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap};
+		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel};
 	</script>
 	<style>
 		:root {
@@ -311,7 +312,7 @@
 				return;
 			}
 
-			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap} = window.CodeMirror;
+			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel} = window.CodeMirror;
 			
 			// Load saved content
 			const savedContent = loadFromStorage();
@@ -322,6 +323,7 @@
 					doc: savedContent,
 					extensions: [
 						history(),
+						search(),
 						closeBrackets(),
 						keymap.of([
 							{key: "Mod-z", run: undo},
@@ -330,6 +332,7 @@
 							{key: "Mod-o", run: () => { window.loadFile(); return true; }},
 							{key: "Mod-s", run: () => { window.saveFile(); return true; }},
 							indentWithTab, 
+							...searchKeymap.filter(binding => binding.key !== "Mod-f"),
 							...defaultKeymap
 						]),
 						html(),
@@ -360,6 +363,14 @@
 			
 			// Focus the editor
 			editorView.focus();
+			
+			// Global keydown handler for Cmd+F toggle
+			document.addEventListener('keydown', function(e) {
+				if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
+					e.preventDefault();
+					closeSearchPanel(editorView) || openSearchPanel(editorView);
+				}
+			});
 		}
 
 		// Initialize when page loads
