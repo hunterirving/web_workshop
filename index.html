@@ -187,8 +187,63 @@
 			}
 		});
 
+		function extractTitleAndFavicon(htmlCode) {
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(htmlCode, 'text/html');
+			
+			// Extract title
+			const titleElement = doc.querySelector('title');
+			const title = titleElement ? titleElement.textContent.trim() : null;
+			
+			// Extract favicon
+			const faviconSelectors = [
+				'link[rel="icon"]',
+				'link[rel="shortcut icon"]', 
+				'link[rel="apple-touch-icon"]',
+				'link[rel="mask-icon"]'
+			];
+			
+			let favicon = null;
+			for (const selector of faviconSelectors) {
+				const faviconElement = doc.querySelector(selector);
+				if (faviconElement && faviconElement.href) {
+					favicon = faviconElement.href;
+					break;
+				}
+			}
+			
+			return { title, favicon };
+		}
+
+		function updateMainPageTitleAndFavicon(title, favicon) {
+			// Update title
+			if (title) {
+				document.title = title;
+			} else {
+				document.title = 'Web Workshop';
+			}
+			
+			// Update favicon
+			let faviconLink = document.querySelector('link[rel="icon"]');
+			if (!faviconLink) {
+				faviconLink = document.createElement('link');
+				faviconLink.rel = 'icon';
+				document.head.appendChild(faviconLink);
+			}
+			
+			if (favicon) {
+				faviconLink.href = favicon;
+			} else {
+				faviconLink.href = 'resources/rollerskate.png';
+			}
+		}
+
 		function updatePreview() {
 			const code = editorView.state.doc.toString();
+			
+			// Extract and update title and favicon from user's HTML
+			const { title, favicon } = extractTitleAndFavicon(code);
+			updateMainPageTitleAndFavicon(title, favicon);
 			
 			// Store scroll position before updating
 			let scrollX = 0, scrollY = 0;
