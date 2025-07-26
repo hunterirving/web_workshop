@@ -426,6 +426,17 @@
 				parent: document.getElementById('editor')
 			});
 
+			// Track editor focus for mobile keyboard behavior
+			editorView.contentDOM.addEventListener('focus', function() {
+				isEditorFocused = true;
+				handleViewportChange(); // Check if keyboard is already open
+			});
+			
+			editorView.contentDOM.addEventListener('blur', function() {
+				isEditorFocused = false;
+				handleViewportChange(); // Exit fullscreen mode if keyboard is open
+			});
+			
 			// Initial render
 			updatePreview();
 			
@@ -444,6 +455,7 @@
 		// Mobile keyboard detection
 		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 		let keyboardOpenThreshold = 150; // pixels
+		let isEditorFocused = false;
 		
 		function isMobileDevice() {
 			return window.matchMedia("(pointer: coarse), (pointer: none)").matches;
@@ -456,7 +468,8 @@
 			const heightDifference = initialViewportHeight - currentHeight;
 			const isKeyboardOpen = heightDifference > keyboardOpenThreshold;
 			
-			if (isKeyboardOpen) {
+			// Only activate fullscreen editor mode if the editor is focused
+			if (isKeyboardOpen && isEditorFocused) {
 				document.body.classList.add('mobile-keyboard-open');
 				// Set CSS custom property for the visible height
 				document.documentElement.style.setProperty('--visible-height', `${currentHeight}px`);
