@@ -145,6 +145,7 @@
 			body.mobile-keyboard-open .editor-pane {
 				height: var(--visible-height, 100vh);
 				order: 1;
+				overflow: hidden;
 			}
 		}
 
@@ -459,10 +460,14 @@
 				document.body.classList.add('mobile-keyboard-open');
 				// Set CSS custom property for the visible height
 				document.documentElement.style.setProperty('--visible-height', `${currentHeight}px`);
+				// Match editor background color
+				document.body.style.backgroundColor = 'var(--editor-bg)';
 			} else {
 				document.body.classList.remove('mobile-keyboard-open');
 				// Reset to full viewport height
 				document.documentElement.style.setProperty('--visible-height', '100vh');
+				// Reset background color
+				document.body.style.backgroundColor = '';
 			}
 		}
 		
