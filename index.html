@@ -136,6 +136,18 @@
 			}
 		}
 
+		/* Mobile keyboard state - hide preview when keyboard is open */
+		@media (pointer: coarse), (pointer: none) {
+			body.mobile-keyboard-open .preview-pane {
+				display: none;
+			}
+			
+			body.mobile-keyboard-open .editor-pane {
+				height: var(--visible-height, 100vh);
+				order: 1;
+			}
+		}
+
 	</style>
 </head>
 <body>
@@ -419,12 +431,63 @@
 			// Focus the editor
 			editorView.focus();
 			
+			// Setup mobile keyboard detection
+			setupMobileKeyboardDetection();
+			
 			// Global keydown handler for Cmd+F toggle
 			document.addEventListener('keydown', function(e) {
 				if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
 					e.preventDefault();
 					closeSearchPanel(editorView) || openSearchPanel(editorView);
 				}
+			});
+		}
+
+		// Mobile keyboard detection
+		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+		let keyboardOpenThreshold = 150; // pixels
+		
+		function isMobileDevice() {
+			return window.matchMedia("(pointer: coarse), (pointer: none)").matches;
+		}
+		
+		function handleViewportChange() {
+			if (!isMobileDevice()) return;
+			
+			const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+			const heightDifference = initialViewportHeight - currentHeight;
+			const isKeyboardOpen = heightDifference > keyboardOpenThreshold;
+			
+			if (isKeyboardOpen) {
+				document.body.classList.add('mobile-keyboard-open');
+				// Set CSS custom property for the visible height
+				document.documentElement.style.setProperty('--visible-height', `${currentHeight}px`);
+			} else {
+				document.body.classList.remove('mobile-keyboard-open');
+				// Reset to full viewport height
+				document.documentElement.style.setProperty('--visible-height', '100vh');
+			}
+		}
+		
+		// Listen for viewport changes
+		if (window.visualViewport) {
+			window.visualViewport.addEventListener('resize', handleViewportChange);
+		} else {
+			window.addEventListener('resize', handleViewportChange);
+		}
+		
+		// Also listen for focus/blur events on the editor for additional reliability
+		function setupMobileKeyboardDetection() {
+			if (!isMobileDevice() || !editorView) return;
+			
+			const editorElement = editorView.dom;
+			
+			editorElement.addEventListener('focusin', () => {
+				setTimeout(handleViewportChange, 300); // Delay to allow keyboard animation
+			});
+			
+			editorElement.addEventListener('focusout', () => {
+				setTimeout(handleViewportChange, 300); // Delay to allow keyboard animation
 			});
 		}
 
