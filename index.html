@@ -431,9 +431,6 @@
 			// Focus the editor
 			editorView.focus();
 			
-			// Setup mobile keyboard detection
-			setupMobileKeyboardDetection();
-			
 			// Global keydown handler for Cmd+F toggle
 			document.addEventListener('keydown', function(e) {
 				if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
@@ -474,21 +471,6 @@
 			window.visualViewport.addEventListener('resize', handleViewportChange);
 		} else {
 			window.addEventListener('resize', handleViewportChange);
-		}
-		
-		// Also listen for focus/blur events on the editor for additional reliability
-		function setupMobileKeyboardDetection() {
-			if (!isMobileDevice() || !editorView) return;
-			
-			const editorElement = editorView.dom;
-			
-			editorElement.addEventListener('focusin', () => {
-				setTimeout(handleViewportChange, 300); // Delay to allow keyboard animation
-			});
-			
-			editorElement.addEventListener('focusout', () => {
-				setTimeout(handleViewportChange, 300); // Delay to allow keyboard animation
-			});
 		}
 
 		// Initialize when page loads
