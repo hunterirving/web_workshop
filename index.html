@@ -252,6 +252,12 @@
 		}
 
 		function updatePreview() {
+			// Skip preview updates while mobile keyboard is open and editor is focused
+			// This prevents keyboard layer resets on Android
+			if (isMobileDevice() && isEditorFocused && document.body.classList.contains('mobile-keyboard-open')) {
+				return;
+			}
+			
 			const code = editorView.state.doc.toString();
 			
 			// Extract and update title and favicon from user's HTML
@@ -481,6 +487,8 @@
 				document.documentElement.style.setProperty('--visible-height', '100vh');
 				// Reset background color
 				document.body.style.backgroundColor = '';
+				// Update preview when keyboard closes to show any changes made while typing
+				updatePreview();
 			}
 		}
 		
