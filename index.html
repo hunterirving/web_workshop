@@ -462,6 +462,7 @@
 		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 		let keyboardOpenThreshold = 150; // pixels
 		let isEditorFocused = false;
+		let wasKeyboardOpen = false;
 		
 		function isMobileDevice() {
 			return window.matchMedia("(pointer: coarse), (pointer: none)").matches;
@@ -481,14 +482,21 @@
 				document.documentElement.style.setProperty('--visible-height', `${currentHeight}px`);
 				// Match editor background color
 				document.body.style.backgroundColor = 'var(--editor-bg)';
-			} else {
+				wasKeyboardOpen = true;
+			} else if (wasKeyboardOpen && !isKeyboardOpen) {
+				// Only run this when transitioning from keyboard open to closed
 				document.body.classList.remove('mobile-keyboard-open');
 				// Reset to full viewport height
 				document.documentElement.style.setProperty('--visible-height', '100vh');
 				// Reset background color
 				document.body.style.backgroundColor = '';
+				// Blur the editor only if it was focused to prevent keyboard from reopening
+				if (isEditorFocused) {
+					editorView.contentDOM.blur();
+				}
 				// Update preview when keyboard closes to show any changes made while typing
 				updatePreview();
+				wasKeyboardOpen = false;
 			}
 		}
 		
