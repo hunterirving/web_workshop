@@ -136,13 +136,27 @@
 			}
 		}
 
-		/* Mobile keyboard state - hide preview when keyboard is open */
-		@media (pointer: coarse), (pointer: none) {
+		/* Mobile keyboard state - portrait mode (height > width) */
+		@media (pointer: coarse) and (max-aspect-ratio: 1/1), (pointer: none) and (max-aspect-ratio: 1/1) {
 			body.mobile-keyboard-open .preview-pane {
 				display: none;
 			}
 			
 			body.mobile-keyboard-open .editor-pane {
+				height: var(--visible-height, 100vh);
+				order: 1;
+				overflow: hidden;
+			}
+		}
+
+		/* Mobile keyboard state - landscape mode (width > height) */
+		@media (pointer: coarse) and (min-aspect-ratio: 1/1), (pointer: none) and (min-aspect-ratio: 1/1) {
+			body.mobile-keyboard-open .preview-pane {
+				display: none;
+			}
+			
+			body.mobile-keyboard-open .editor-pane {
+				width: 100%;
 				height: var(--visible-height, 100vh);
 				order: 1;
 				overflow: hidden;
@@ -472,6 +486,13 @@
 			if (!isMobileDevice()) return;
 			
 			const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+			
+			// Detect potential orientation change: very large height difference when no keyboard activity
+			// Use a higher threshold to avoid interfering with keyboard detection
+			if (!wasKeyboardOpen && !isEditorFocused && Math.abs(initialViewportHeight - currentHeight) > 300) {
+				initialViewportHeight = currentHeight;
+			}
+			
 			const heightDifference = initialViewportHeight - currentHeight;
 			const isKeyboardOpen = heightDifference > keyboardOpenThreshold;
 			
