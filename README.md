@@ -16,7 +16,7 @@ Craft handmade websites in their natural habitat (your web browser).
 
 <i>
 <img src="images/hint.gif" width=60px>
-Try installing Web Workshop as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Installing">Progressive Web App</a>!</i>
+Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
 
 ## Technologies Used
 
