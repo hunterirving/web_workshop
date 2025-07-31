@@ -23,6 +23,11 @@
 			margin-bottom: 30px;
 		}
 		
+		.subtitle {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+		
 		h2 {
 			border-bottom: 1px solid #666;
 			padding-bottom: 5px;
@@ -47,13 +52,13 @@
 		}
 		
 		
-		.toc a {
+		a {
 			color: #0000EE;
 			text-decoration: underline;
 		}
 		
-		.toc a:visited {
-			color: #551A8B;
+		a:visited {
+			color: #0000EE;
 		}
 		
 		.auto-detected {
@@ -112,11 +117,82 @@
 			font-size: 0.9em;
 			color: #666;
 		}
+		
+		/* Dark mode styles */
+		@media (prefers-color-scheme: dark) {
+			body {
+				background-color: #1a1a1a;
+				color: #e0e0e0;
+			}
+			
+			h1, h2 {
+				color: #ffffff;
+				border-color: #666;
+			}
+			
+			.toc, .section {
+				background-color: #2d2d2d;
+				border: none;
+			}
+			
+			.auto-detected {
+				background-color: #2d4a2d;
+				border: none;
+			}
+			
+			a {
+				color: #66b3ff;
+			}
+			
+			a:visited {
+				color: #66b3ff;
+			}
+			
+			code {
+				background-color: #3d3d3d;
+				border-color: #555;
+				color: #e0e0e0;
+			}
+			
+			.note {
+				color: #aaa;
+				border-left-color: #666;
+			}
+			
+			footer {
+				border-top-color: #666;
+				color: #aaa;
+			}
+		}
+		
+		/* Mobile responsive styles */
+		@media (max-width: 768px) {
+			body {
+				padding: 0px;
+			}
+			
+			h1 {
+				margin-top: 10px;
+				margin-bottom: 20px;
+				font-size: 1.8em;
+			}
+			
+			.subtitle {
+				display: none;
+			}
+			
+			.section, .toc, .auto-detected {
+				margin: 20px 0;
+				padding: 15px 10px;
+				border-left: none;
+				border-right: none;
+			}
+		}
 	</style>
 </head>
 <body>
 	<h1>Installing Progressive Web Apps</h1>
-	<center><p><em>A comprehensive guide for installing PWAs across different operating systems and browsers</em></p></center>
+	<p class="subtitle"><em>A comprehensive guide for installing PWAs across different operating systems and browsers</em></p>
 	
 	<div id="auto-detected" class="auto-detected">
 		<p><span class="lightbulb">💡</span> Based on your system, you might want to jump directly to: <span id="detected-link"></span></p>
@@ -275,7 +351,7 @@
 	</div>
 
 	<footer>
-		<p>This guide covers the most common browsers and platforms as of 2025. PWA support continues to evolve.</p>
+		<p>This guide covers the most common browsers and platforms as of 2025.<br>PWA support continues to evolve.</p>
 	</footer>
 
 	<script>
@@ -288,16 +364,16 @@
 			let targetSection = '';
 			
 			// Detect OS
-			if (platform.includes('win')) {
+			if (userAgent.includes('android')) {
+				detectedOS = 'Android';
+			} else if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
+				detectedOS = 'iOS';
+			} else if (platform.includes('win')) {
 				detectedOS = 'Windows';
 			} else if (platform.includes('mac')) {
 				detectedOS = 'macOS';
 			} else if (platform.includes('linux')) {
 				detectedOS = 'Linux';
-			} else if (userAgent.includes('android')) {
-				detectedOS = 'Android';
-			} else if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
-				detectedOS = 'iOS';
 			}
 			
 			// Detect Browser
