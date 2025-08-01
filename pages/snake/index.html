@@ -493,6 +493,9 @@
 			}
 		}
 		
+		// Track key state to prevent hold repeats
+		let keysPressed = {};
+		
 		document.addEventListener('keydown', (event) => {
 			if (event.code === 'Space') {
 				if (!gameRunning) {
@@ -502,6 +505,10 @@
 			}
 			
 			if (!gameRunning) return;
+			
+			// Only process if key wasn't already pressed
+			if (keysPressed[event.code]) return;
+			keysPressed[event.code] = true;
 			
 			switch(event.code) {
 				case 'ArrowUp':
@@ -519,29 +526,78 @@
 			}
 		});
 		
-		// Mobile controls
+		document.addEventListener('keyup', (event) => {
+			keysPressed[event.code] = false;
+		});
+		
+		// Mobile controls - Track which button was last triggered to prevent hold repeats
+		let lastTriggeredButton = null;
+		
+		function handleTouchMove(e) {
+			e.preventDefault();
+			const touch = e.touches[0];
+			const element = document.elementFromPoint(touch.clientX, touch.clientY);
+			const button = element?.closest('.control-btn');
+			
+			if (button && button !== lastTriggeredButton) {
+				lastTriggeredButton = button;
+				
+				if (gameRunning) {
+					switch(button.id) {
+						case 'upBtn':
+							setDirection({x: 0, y: -1});
+							break;
+						case 'downBtn':
+							setDirection({x: 0, y: 1});
+							break;
+						case 'leftBtn':
+							setDirection({x: -1, y: 0});
+							break;
+						case 'rightBtn':
+							setDirection({x: 1, y: 0});
+							break;
+					}
+				} else if (button.id === 'centerBtn') {
+					startGame();
+				}
+			}
+		}
+		
+		function handleTouchEnd(e) {
+			e.preventDefault();
+			lastTriggeredButton = null;
+		}
+		
+		// Add touch event listeners for sliding behavior
 		document.getElementById('upBtn').addEventListener('touchstart', (e) => {
 			e.preventDefault();
+			lastTriggeredButton = e.target;
 			if (gameRunning) setDirection({x: 0, y: -1});
 		});
 		document.getElementById('downBtn').addEventListener('touchstart', (e) => {
 			e.preventDefault();
+			lastTriggeredButton = e.target;
 			if (gameRunning) setDirection({x: 0, y: 1});
 		});
 		document.getElementById('leftBtn').addEventListener('touchstart', (e) => {
 			e.preventDefault();
+			lastTriggeredButton = e.target;
 			if (gameRunning) setDirection({x: -1, y: 0});
 		});
 		document.getElementById('rightBtn').addEventListener('touchstart', (e) => {
 			e.preventDefault();
+			lastTriggeredButton = e.target;
 			if (gameRunning) setDirection({x: 1, y: 0});
 		});
 		document.getElementById('centerBtn').addEventListener('touchstart', (e) => {
 			e.preventDefault();
-			if (!gameRunning) {
-				startGame();
-			}
+			lastTriggeredButton = e.target;
+			if (!gameRunning) startGame();
 		});
+		
+		// Add global touch move and end listeners for sliding
+		document.addEventListener('touchmove', handleTouchMove);
+		document.addEventListener('touchend', handleTouchEnd);
 		
 		// Handle window resize and orientation changes
 		window.addEventListener('resize', () => {
