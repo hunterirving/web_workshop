@@ -122,7 +122,7 @@
 		@media (prefers-color-scheme: dark) {
 			body {
 				background-color: #1a1a1a;
-				color: #e0e0e0;
+				color: #ffffff;
 			}
 			
 			h1, h2 {
@@ -376,8 +376,13 @@
 				detectedOS = 'Linux';
 			}
 			
-			// Detect Browser
-			if (userAgent.includes('firefox')) {
+			// Detect Browser - iOS only allows PWA installation through Safari
+			if (detectedOS === 'iOS') {
+				// On iOS, all browsers use Safari's WebKit engine
+				// Only Safari can install PWAs, so always direct to Safari section
+				detectedBrowser = 'Safari';
+				targetSection = 'safari-ios';
+			} else if (userAgent.includes('firefox')) {
 				detectedBrowser = 'Firefox';
 				if (detectedOS === 'Android') {
 					targetSection = 'firefox-android';
@@ -386,11 +391,7 @@
 				}
 			} else if (userAgent.includes('safari') && !userAgent.includes('chrome')) {
 				detectedBrowser = 'Safari';
-				if (detectedOS === 'iOS') {
-					targetSection = 'safari-ios';
-				} else {
-					targetSection = 'safari-mac';
-				}
+				targetSection = 'safari-mac';
 			} else if (userAgent.includes('edg')) {
 				detectedBrowser = 'Edge';
 				targetSection = 'edge-windows';
