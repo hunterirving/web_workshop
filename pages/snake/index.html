@@ -386,7 +386,12 @@
 		
 		function gameOver() {
 			gameRunning = false;
-			document.getElementById('gameOver').innerHTML = 'Game Over!<br>Press Space to restart';
+			
+			if (gamepadConnected) {
+				document.getElementById('gameOver').innerHTML = 'Game Over!<br>Press START button to restart';
+			} else {
+				document.getElementById('gameOver').innerHTML = 'Game Over!<br>Press Space to restart';
+			}
 			
 			// Show restart button and mobile message
 			const centerBtn = document.getElementById('centerBtn');
@@ -397,7 +402,11 @@
 				centerBtn.classList.remove('hidden');
 			}
 			if (mobileGameOver) {
-				mobileGameOver.innerHTML = 'Game Over!<br>Press 🟢 to restart';
+				if (gamepadConnected) {
+					mobileGameOver.innerHTML = 'Game Over!<br>Press START button to restart';
+				} else {
+					mobileGameOver.innerHTML = 'Game Over!<br>Press 🟢 to restart';
+				}
 				mobileGameOver.style.display = 'block';
 			}
 			
@@ -598,6 +607,121 @@
 		// Add global touch move and end listeners for sliding
 		document.addEventListener('touchmove', handleTouchMove);
 		document.addEventListener('touchend', handleTouchEnd);
+		
+		// Gamepad support
+		let gamepadConnected = false;
+		let lastGamepadState = {};
+		
+		function handleGamepadConnected(event) {
+			gamepadConnected = true;
+			console.log('Gamepad connected:', event.gamepad.id);
+			updateStartHints();
+		}
+		
+		function handleGamepadDisconnected(event) {
+			gamepadConnected = false;
+			updateStartHints();
+		}
+		
+		function updateStartHints() {
+			if (gamepadConnected) {
+				document.getElementById('startHint').textContent = 'Press START button to start!';
+				document.getElementById('mobileStartHint').textContent = 'Press START button to start!';
+			} else {
+				document.getElementById('startHint').textContent = 'Press Space to start!';
+				document.getElementById('mobileStartHint').textContent = 'Press 🟢 to start!';
+			}
+		}
+		
+		function checkGamepadAvailability() {
+			// Check if Gamepad API is available
+			if (!navigator.getGamepads) {
+				return false;
+			}
+			
+			// Check for connected gamepads (some browsers need button press first)
+			const gamepads = navigator.getGamepads();
+			for (let i = 0; i < gamepads.length; i++) {
+				if (gamepads[i]) {
+					if (!gamepadConnected) {
+						gamepadConnected = true;
+						updateStartHints();
+					}
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		function updateGamepad() {
+			// Always check for gamepads (Firefox sometimes needs this)
+			if (!checkGamepadAvailability()) return;
+			
+			const gamepads = navigator.getGamepads();
+			let gamepad = null;
+			
+			// Find first connected gamepad
+			for (let i = 0; i < gamepads.length; i++) {
+				if (gamepads[i]) {
+					gamepad = gamepads[i];
+					break;
+				}
+			}
+			
+			if (!gamepad) return;
+			
+			// Check both D-pad buttons AND left analog stick for broader compatibility
+			const currentState = {
+				// D-pad buttons (standard mapping)
+				up: gamepad.buttons[12]?.pressed || gamepad.axes[1] < -0.5 || false,
+				down: gamepad.buttons[13]?.pressed || gamepad.axes[1] > 0.5 || false,
+				left: gamepad.buttons[14]?.pressed || gamepad.axes[0] < -0.5 || false,
+				right: gamepad.buttons[15]?.pressed || gamepad.axes[0] > 0.5 || false,
+				// Accept face buttons and Start (+ on Switch Pro controller) as "START button"
+				action: gamepad.buttons[0]?.pressed || gamepad.buttons[1]?.pressed || gamepad.buttons[2]?.pressed || gamepad.buttons[3]?.pressed || gamepad.buttons[9]?.pressed || false
+			};
+			
+			// Check for newly pressed buttons (edge detection)
+			if (currentState.up && !lastGamepadState.up) {
+				if (gameRunning) {
+					setDirection({x: 0, y: -1});
+				}
+			}
+			if (currentState.down && !lastGamepadState.down) {
+				if (gameRunning) {
+					setDirection({x: 0, y: 1});
+				}
+			}
+			if (currentState.left && !lastGamepadState.left) {
+				if (gameRunning) {
+					setDirection({x: -1, y: 0});
+				}
+			}
+			if (currentState.right && !lastGamepadState.right) {
+				if (gameRunning) {
+					setDirection({x: 1, y: 0});
+				}
+			}
+			if (currentState.action && !lastGamepadState.action) {
+				if (!gameRunning) {
+					startGame();
+				}
+			}
+			
+			lastGamepadState = currentState;
+		}
+		
+		// Add gamepad event listeners
+		window.addEventListener('gamepadconnected', handleGamepadConnected);
+		window.addEventListener('gamepaddisconnected', handleGamepadDisconnected);
+		
+		// Poll gamepad state regularly
+		setInterval(updateGamepad, 10); // Poll 100 times a second
+		
+		// Initial check
+		setTimeout(checkGamepadAvailability, 1000);
+		
 		
 		// Handle window resize and orientation changes
 		window.addEventListener('resize', () => {
