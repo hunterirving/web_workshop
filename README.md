@@ -12,11 +12,14 @@ Craft handmade websites in their natural habitat (your web browser).
     - Your work is automatically saved and restored when you reload the page
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to reopen exported files)
 
-<br>
+### Options
+- to toggle line numbers on/off, press <kbd>F1</kbd>
+- to toggle line wrapping on/off, press <kbd>F2</kbd>
 
-<i>
+<br>
 <img src="images/hint.gif" width=60px>
-Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
+<i>
+Wanna make websites on your phone? Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
 
 ## Technologies Used
 
