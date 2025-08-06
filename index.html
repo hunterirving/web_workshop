@@ -7,8 +7,8 @@
 	<link rel="icon" href="resources/rollerskate.png">
 	<link rel="manifest" href="manifest.json">
 	<script type="module">
-		import {EditorView, keymap, placeholder} from "https://esm.sh/@codemirror/view@6"
-		import {EditorState} from "https://esm.sh/@codemirror/state@6"
+		import {EditorView, keymap, placeholder, lineNumbers} from "https://esm.sh/@codemirror/view@6"
+		import {EditorState, Compartment} from "https://esm.sh/@codemirror/state@6"
 		import {defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap} from "https://esm.sh/@codemirror/commands@6"
 		import {closeBrackets, closeBracketsKeymap} from "https://esm.sh/@codemirror/autocomplete@6"
 		import {html} from "https://esm.sh/@codemirror/lang-html@6"
@@ -16,7 +16,7 @@
 		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
 		import {search, searchKeymap, closeSearchPanel, openSearchPanel} from "https://esm.sh/@codemirror/search@6"
 		
-		window.CodeMirror = {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel};
+		window.CodeMirror = {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers};
 	</script>
 	<style>
 		:root {
@@ -180,6 +180,8 @@
 		const preview = document.getElementById('preview');
 		const storageKey = 'html-lab-content';
 		let isFullscreen = false;
+		let showLineNumbers = false;
+		let lineNumbersCompartment;
 
 		function toggleFullscreen() {
 			const previewPane = document.querySelector('.preview-pane');
@@ -361,6 +363,34 @@
 			}
 		}
 
+		function loadEditorSettings() {
+			try {
+				showLineNumbers = localStorage.getItem('editor-line-numbers') === 'true';
+			} catch (e) {
+				console.warn('Could not load editor settings from localStorage:', e);
+				showLineNumbers = false;
+			}
+		}
+
+		function saveEditorSetting(key, value) {
+			try {
+				localStorage.setItem(key, value.toString());
+			} catch (e) {
+				console.warn('Could not save editor setting to localStorage:', e);
+			}
+		}
+
+		function toggleLineNumbers() {
+			const {lineNumbers} = window.CodeMirror;
+			showLineNumbers = !showLineNumbers;
+			saveEditorSetting('editor-line-numbers', showLineNumbers);
+			
+			editorView.dispatch({
+				effects: lineNumbersCompartment.reconfigure(showLineNumbers ? lineNumbers() : [])
+			});
+		}
+
+
 		// File operations
 		window.saveFile = function() {
 			const blob = new Blob([editorView.state.doc.toString()], { type: 'text/html' });
@@ -400,10 +430,14 @@
 				return;
 			}
 
-			const {EditorView, EditorState, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel} = window.CodeMirror;
+			const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers} = window.CodeMirror;
 			
-			// Load saved content
+			// Load saved content and editor settings
 			const savedContent = loadFromStorage();
+			loadEditorSettings();
+			
+			// Create compartments for dynamic extensions
+			lineNumbersCompartment = new Compartment();
 			
 			// Create CodeMirror editor
 			editorView = new EditorView({
@@ -419,6 +453,7 @@
 							{key: "Mod-Shift-z", run: redo},
 							{key: "Mod-o", run: () => { window.loadFile(); return true; }},
 							{key: "Mod-s", run: () => { window.saveFile(); return true; }},
+							{key: "F1", run: () => { toggleLineNumbers(); return true; }},
 							indentWithTab, 
 							...searchKeymap.filter(binding => binding.key !== "Mod-f"),
 							...defaultKeymap
@@ -440,7 +475,8 @@
 							'autocorrect': 'off',
 							'autocapitalize': 'off',
 							'spellcheck': 'false'
-						})
+						}),
+						lineNumbersCompartment.of(showLineNumbers ? lineNumbers() : [])
 					]
 				}),
 				parent: document.getElementById('editor')
