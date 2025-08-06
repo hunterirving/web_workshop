@@ -467,18 +467,21 @@
 							}
 						}
 
-						const offset = Math.min(indented_chars, ARBITRARY_INDENT_LINE_WRAP_LIMIT) * charWidth;
+						// Only apply decoration to lines that have indentation
+						if (indented_chars > 0) {
+							const offset = Math.min(indented_chars, ARBITRARY_INDENT_LINE_WRAP_LIMIT) * charWidth;
 
-						const rules = document.createElement('span').style;
-						rules.setProperty('--idented', `${offset}px`);
-						rules.setProperty('text-indent', 'calc(-1 * var(--idented) - 1px)');
-						rules.setProperty('padding-left', 'calc(var(--idented) + 2px)');
+							const rules = document.createElement('span').style;
+							rules.setProperty('--idented', `${offset}px`);
+							rules.setProperty('text-indent', 'calc(-1 * var(--idented) - 1px)');
+							rules.setProperty('padding-left', 'calc(var(--idented) + 6px)');
 
-						const linerwapper = Decoration.line({
-							attributes: { style: rules.cssText }
-						});
+							const linerwapper = Decoration.line({
+								attributes: { style: rules.cssText }
+							});
 
-						decorations.push(linerwapper.range(line.from, line.from));
+							decorations.push(linerwapper.range(line.from, line.from));
+						}
 					}
 					return Decoration.set(decorations, true);
 				},
