@@ -7,7 +7,7 @@
 	<link rel="icon" href="resources/rollerskate.png">
 	<link rel="manifest" href="manifest.json">
 	<script type="module">
-		import {EditorView, keymap, placeholder, lineNumbers} from "https://esm.sh/@codemirror/view@6"
+		import {EditorView, keymap, placeholder, lineNumbers, Decoration} from "https://esm.sh/@codemirror/view@6"
 		import {EditorState, Compartment} from "https://esm.sh/@codemirror/state@6"
 		import {defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap} from "https://esm.sh/@codemirror/commands@6"
 		import {closeBrackets, closeBracketsKeymap} from "https://esm.sh/@codemirror/autocomplete@6"
@@ -16,7 +16,7 @@
 		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
 		import {search, searchKeymap, closeSearchPanel, openSearchPanel} from "https://esm.sh/@codemirror/search@6"
 		
-		window.CodeMirror = {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers};
+		window.CodeMirror = {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers, Decoration};
 	</script>
 	<style>
 		:root {
@@ -197,7 +197,9 @@
 		const storageKey = 'html-lab-content';
 		let isFullscreen = false;
 		let showLineNumbers = false;
+		let enableLineWrapping = false;
 		let lineNumbersCompartment;
+		let lineWrappingCompartment;
 
 		function toggleFullscreen() {
 			const previewPane = document.querySelector('.preview-pane');
@@ -382,9 +384,11 @@
 		function loadEditorSettings() {
 			try {
 				showLineNumbers = localStorage.getItem('editor-line-numbers') === 'true';
+				enableLineWrapping = localStorage.getItem('editor-line-wrapping') === 'true';
 			} catch (e) {
 				console.warn('Could not load editor settings from localStorage:', e);
 				showLineNumbers = false;
+				enableLineWrapping = false;
 			}
 		}
 
@@ -406,6 +410,60 @@
 			});
 		}
 
+		function createLineWrappingExtension() {
+			const {EditorView, Decoration} = window.CodeMirror;
+			
+			return [
+				EditorView.lineWrapping,
+				EditorView.decorations.of((view) => {
+					const decorations = [];
+					
+					for (let {from, to} of view.visibleRanges) {
+						for (let pos = from; pos <= to;) {
+							const line = view.state.doc.lineAt(pos);
+							const lineText = line.text;
+							
+							// Calculate indentation level (count leading whitespace)
+							let indentChars = 0;
+							for (let i = 0; i < lineText.length; i++) {
+								if (lineText[i] === '\t') {
+									indentChars += 2; // Convert tab to 2 spaces for calculation
+								} else if (lineText[i] === ' ') {
+									indentChars += 1;
+								} else {
+									break;
+								}
+							}
+							
+							// Apply hanging indent if line has indentation
+							if (indentChars > 0) {
+								const indentDecoration = Decoration.line({
+									attributes: {
+										style: `text-indent: -${indentChars}ch; padding-left: calc(${indentChars}ch + 6px);`
+									}
+								});
+								decorations.push(indentDecoration.range(line.from));
+							}
+							
+							pos = line.to + 1;
+						}
+					}
+					
+					return decorations.length > 0 ? Decoration.set(decorations) : Decoration.none;
+				}),
+			];
+		}
+
+		function toggleLineWrapping() {
+			enableLineWrapping = !enableLineWrapping;
+			saveEditorSetting('editor-line-wrapping', enableLineWrapping);
+			
+			const lineWrappingExtension = enableLineWrapping ? createLineWrappingExtension() : [];
+			
+			editorView.dispatch({
+				effects: lineWrappingCompartment.reconfigure(lineWrappingExtension)
+			});
+		}
 
 		// File operations
 		window.saveFile = function() {
@@ -446,7 +504,7 @@
 				return;
 			}
 
-			const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers} = window.CodeMirror;
+			const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers, Decoration, DecorationSet} = window.CodeMirror;
 			
 			// Load saved content and editor settings
 			const savedContent = loadFromStorage();
@@ -454,6 +512,9 @@
 			
 			// Create compartments for dynamic extensions
 			lineNumbersCompartment = new Compartment();
+			lineWrappingCompartment = new Compartment();
+			
+			const initialLineWrappingExtension = enableLineWrapping ? createLineWrappingExtension() : [];
 			
 			// Create CodeMirror editor
 			editorView = new EditorView({
@@ -470,6 +531,7 @@
 							{key: "Mod-o", run: () => { window.loadFile(); return true; }},
 							{key: "Mod-s", run: () => { window.saveFile(); return true; }},
 							{key: "F1", run: () => { toggleLineNumbers(); return true; }},
+							{key: "F2", run: () => { toggleLineWrapping(); return true; }},
 							indentWithTab, 
 							...searchKeymap.filter(binding => binding.key !== "Mod-f"),
 							...defaultKeymap
@@ -492,7 +554,8 @@
 							'autocapitalize': 'off',
 							'spellcheck': 'false'
 						}),
-						lineNumbersCompartment.of(showLineNumbers ? lineNumbers() : [])
+						lineNumbersCompartment.of(showLineNumbers ? lineNumbers() : []),
+						lineWrappingCompartment.of(initialLineWrappingExtension)
 					]
 				}),
 				parent: document.getElementById('editor')
