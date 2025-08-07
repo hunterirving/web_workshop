@@ -384,11 +384,11 @@
 		function loadEditorSettings() {
 			try {
 				showLineNumbers = localStorage.getItem('editor-line-numbers') === 'true';
-				enableLineWrapping = localStorage.getItem('editor-line-wrapping') === 'true';
+				enableLineWrapping = localStorage.getItem('editor-line-wrapping') !== 'false';
 			} catch (e) {
 				console.warn('Could not load editor settings from localStorage:', e);
 				showLineNumbers = false;
-				enableLineWrapping = false;
+				enableLineWrapping = true;
 			}
 		}
 
