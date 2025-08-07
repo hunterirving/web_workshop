@@ -13,8 +13,8 @@ Craft handmade websites in their natural habitat (your web browser).
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to reopen exported files)
 
 ### Options
-- to toggle line numbers on/off, press <kbd>F1</kbd>
-- to toggle line wrapping on/off, press <kbd>F2</kbd>
+- to toggle <b>line numbers</b>, press <kbd>F1</kbd> (disabled by default)
+- to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 <br>
 <img src="images/hint.gif" width=60px>
