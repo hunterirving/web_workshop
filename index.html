@@ -22,6 +22,7 @@
 		:root {
 			--text-color: #f8f8f2;
 			--editor-bg: #16181b;
+			scrollbar-color: grey var(--editor-bg);
 		}
 
 		* {
@@ -123,6 +124,42 @@
 		/* Disable overscroll on all CodeMirror elements */
 		.cm-editor, .cm-content, .cm-scroller, .cm-scrollElement {
 			overscroll-behavior: none !important;
+		}
+
+		/* Simplify search panel - hide all buttons, labels, and replace input */
+		.cm-search button {
+			display: none !important;
+		}
+
+		.cm-search {
+			background-color: #16181b;
+		}
+		
+		.cm-search label {
+			display: none !important;
+		}
+		
+		.cm-search input[name="replace"] {
+			display: none !important;
+		}
+		
+		/* Style search input to match editor text size */
+		.cm-search input[name="search"] {
+			font-size: 21px !important;
+			width: 100% !important;
+			border-radius: 50px !important;
+			padding-left: 0.8em !important;
+			padding-right: 0.8em !important;
+			padding-bottom: 7px !important;
+		}
+
+		.cm-panels-bottom {
+			border-radius: 0px !important;
+		}
+		
+		.cm-panels-bottom {
+			border-top: none !important;
+
 		}
 
 		#preview {
