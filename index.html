@@ -53,6 +53,7 @@
 			width: 50%;
 			height: 100%;
 			position: relative;
+			transition: opacity 0.1s ease-out; /* Added transition for smoother opacity hack */
 		}
 
 		.preview-pane {
@@ -609,9 +610,36 @@
 			// Initial render
 			updatePreview();
 
-			// Track editor focus for mobile keyboard detection
+			// Track editor focus and handle keyboard dismissal
 			editorView.contentDOM.addEventListener('focus', () => { isEditorFocused = true; });
-			editorView.contentDOM.addEventListener('blur', () => { isEditorFocused = false; });
+			
+			editorView.contentDOM.addEventListener('blur', () => { 
+				isEditorFocused = false; 
+
+				// If we are on mobile and the keyboard mode is active, 
+				// exit immediately. Do not wait for visualViewport resize.
+				if (isMobileDevice() && document.body.classList.contains('mobile-keyboard-open')) {
+					
+					// 1. Hide editor immediately to prevent the "stutter/jump" visual
+					editorPane.style.opacity = '0';
+					
+					// 2. Remove the class to trigger layout engine (100% -> 50% height)
+					document.body.classList.remove('mobile-keyboard-open');
+					
+					// 3. Wait for layout to settle, then restore scroll and opacity
+					requestAnimationFrame(() => requestAnimationFrame(() => {
+						if (editorView) {
+							// Scroll cursor into view in the new 50% layout
+							const pos = editorView.state.selection.main.head;
+							const lineBlock = editorView.lineBlockAt(pos);
+							const targetScroll = lineBlock.top - (editorView.dom.clientHeight / 2);
+							editorView.scrollDOM.scrollTop = Math.max(0, targetScroll);
+						}
+						// Reveal the editor
+						editorPane.style.opacity = '';
+					}));
+				}
+			});
 
 			// Focus the editor
 			editorView.focus();
@@ -653,21 +681,26 @@
 			if (isKeyboardOpen && isEditorFocused) {
 				document.body.classList.add('mobile-keyboard-open');
 			} else if (!isKeyboardOpen) {
+				// Check if the class is still there (it might have been removed by blur already)
 				const wasKeyboardOpen = document.body.classList.contains('mobile-keyboard-open');
 
-				if (wasKeyboardOpen && editorView) {
-					// Hide editor, update layout, then scroll cursor into view
-					const pos = editorView.state.selection.main.head;
-					editorPane.style.opacity = '0';
-					document.body.classList.remove('mobile-keyboard-open');
-					requestAnimationFrame(() => requestAnimationFrame(() => {
-						const lineBlock = editorView.lineBlockAt(pos);
-						const targetScroll = lineBlock.top - (editorView.dom.clientHeight / 2);
-						editorView.scrollDOM.scrollTop = Math.max(0, targetScroll);
-						editorPane.style.opacity = '';
-					}));
-				} else {
-					document.body.classList.remove('mobile-keyboard-open');
+				if (wasKeyboardOpen) {
+					// This is a fallback in case blur didn't catch it 
+					// (e.g. if the keyboard was dismissed via a gesture that didn't blur immediately)
+					if (editorView) {
+						const pos = editorView.state.selection.main.head;
+						editorPane.style.opacity = '0';
+						document.body.classList.remove('mobile-keyboard-open');
+						
+						requestAnimationFrame(() => requestAnimationFrame(() => {
+							const lineBlock = editorView.lineBlockAt(pos);
+							const targetScroll = lineBlock.top - (editorView.dom.clientHeight / 2);
+							editorView.scrollDOM.scrollTop = Math.max(0, targetScroll);
+							editorPane.style.opacity = '';
+						}));
+					} else {
+						document.body.classList.remove('mobile-keyboard-open');
+					}
 				}
 			}
 		}
