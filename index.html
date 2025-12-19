@@ -207,12 +207,20 @@
 
 			body.mobile-keyboard-open .editor-pane {
 				position: fixed;
-				top: 0;
+				top: calc(var(--visual-viewport-offset-top, 0px));
 				left: 0;
 				width: 100%;
-				height: 100%;
+				height: var(--visual-viewport-height, 100%);
+				max-height: var(--visual-viewport-height, 100%);
 				order: 1;
 				overscroll-behavior: none;
+				overflow: hidden;
+			}
+
+			body.mobile-keyboard-open .editor-pane #editor,
+			body.mobile-keyboard-open .editor-pane .cm-editor {
+				height: 100% !important;
+				max-height: 100% !important;
 			}
 		}
 
@@ -625,6 +633,14 @@
 		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 		let isEditorFocused = false;
 
+		function updateViewportVariables() {
+			const vv = window.visualViewport;
+			if (vv) {
+				document.documentElement.style.setProperty('--visual-viewport-height', `${vv.height}px`);
+				document.documentElement.style.setProperty('--visual-viewport-offset-top', `${vv.offsetTop}px`);
+			}
+		}
+
 		function handleViewportChange() {
 			if (!isMobileDevice()) return;
 
@@ -632,7 +648,7 @@
 			const heightDifference = initialViewportHeight - currentHeight;
 			const isKeyboardOpen = heightDifference > 150;
 
-			const wasFullscreen = document.body.classList.contains('mobile-keyboard-open');
+			updateViewportVariables();
 
 			if (isKeyboardOpen && isEditorFocused) {
 				document.body.classList.add('mobile-keyboard-open');
@@ -643,6 +659,7 @@
 
 		if (window.visualViewport) {
 			window.visualViewport.addEventListener('resize', handleViewportChange);
+			window.visualViewport.addEventListener('scroll', updateViewportVariables);
 		} else {
 			window.addEventListener('resize', handleViewportChange);
 		}
