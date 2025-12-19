@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 	<title>Web Workshop</title>
 	<link rel="icon" href="resources/rollerskate.png">
 	<link rel="manifest" href="manifest.json">
@@ -31,24 +31,33 @@
 			box-sizing: border-box;
 		}
 
+		html, body {
+			overscroll-behavior: none;
+			background-color: var(--editor-bg);
+		}
+
+		html {
+			height: 100%;
+		}
+
 		body {
 			font-family: monospace;
 			background: var(--bg-color);
 			color: var(--text-color);
-			height: 100vh;
+			height: 100%;
 			display: flex;
 			overflow: hidden;
 		}
 
 		.editor-pane {
 			width: 50%;
-			height: 100vh;
+			height: 100%;
 			position: relative;
 		}
 
 		.preview-pane {
 			width: 50%;
-			height: 100vh;
+			height: 100%;
 			position: relative;
 		}
 
@@ -175,44 +184,35 @@
 			body {
 				flex-direction: column;
 			}
-			
+
 			.editor-pane {
 				width: 100%;
-				height: 50vh;
+				height: 50%;
 				order: 2;
 			}
-			
+
 			.preview-pane {
 				width: 100%;
-				height: 50vh;
+				height: 50%;
 				order: 1;
+				padding-top: env(safe-area-inset-top);
 			}
 		}
 
-		/* Mobile keyboard state - portrait mode (height > width) */
-		@media (pointer: coarse) and (max-aspect-ratio: 1/1), (pointer: none) and (max-aspect-ratio: 1/1) {
+		/* Mobile: fullscreen editor when keyboard is open */
+		@media (pointer: coarse), (pointer: none) {
 			body.mobile-keyboard-open .preview-pane {
 				display: none;
 			}
-			
-			body.mobile-keyboard-open .editor-pane {
-				height: var(--visible-height, 100vh);
-				order: 1;
-				overflow: hidden;
-			}
-		}
 
-		/* Mobile keyboard state - landscape mode (width > height) */
-		@media (pointer: coarse) and (min-aspect-ratio: 1/1), (pointer: none) and (min-aspect-ratio: 1/1) {
-			body.mobile-keyboard-open .preview-pane {
-				display: none;
-			}
-			
 			body.mobile-keyboard-open .editor-pane {
+				position: fixed;
+				top: 0;
+				left: 0;
 				width: 100%;
-				height: var(--visible-height, 100vh);
+				height: 100%;
 				order: 1;
-				overflow: hidden;
+				overscroll-behavior: none;
 			}
 		}
 
@@ -598,20 +598,13 @@
 				parent: document.getElementById('editor')
 			});
 
-			// Track editor focus for mobile keyboard behavior
-			editorView.contentDOM.addEventListener('focus', function() {
-				isEditorFocused = true;
-				handleViewportChange(); // Check if keyboard is already open
-			});
-			
-			editorView.contentDOM.addEventListener('blur', function() {
-				isEditorFocused = false;
-				handleViewportChange(); // Exit fullscreen mode if keyboard is open
-			});
-			
 			// Initial render
 			updatePreview();
-			
+
+			// Track editor focus for mobile keyboard detection
+			editorView.contentDOM.addEventListener('focus', () => { isEditorFocused = true; });
+			editorView.contentDOM.addEventListener('blur', () => { isEditorFocused = false; });
+
 			// Focus the editor
 			editorView.focus();
 			
@@ -625,55 +618,29 @@
 		}
 
 		// Mobile keyboard detection
-		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-		let keyboardOpenThreshold = 150; // pixels
-		let isEditorFocused = false;
-		let wasKeyboardOpen = false;
-		
 		function isMobileDevice() {
 			return window.matchMedia("(pointer: coarse), (pointer: none)").matches;
 		}
-		
+
+		let initialViewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+		let isEditorFocused = false;
+
 		function handleViewportChange() {
 			if (!isMobileDevice()) return;
-			
+
 			const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-			
-			// Detect potential orientation change: very large height difference when no keyboard activity
-			// Use a higher threshold to avoid interfering with keyboard detection
-			if (!wasKeyboardOpen && !isEditorFocused && Math.abs(initialViewportHeight - currentHeight) > 300) {
-				initialViewportHeight = currentHeight;
-			}
-			
 			const heightDifference = initialViewportHeight - currentHeight;
-			const isKeyboardOpen = heightDifference > keyboardOpenThreshold;
-			
-			// Only activate fullscreen editor mode if the editor is focused
+			const isKeyboardOpen = heightDifference > 150;
+
+			const wasFullscreen = document.body.classList.contains('mobile-keyboard-open');
+
 			if (isKeyboardOpen && isEditorFocused) {
 				document.body.classList.add('mobile-keyboard-open');
-				// Set CSS custom property for the visible height
-				document.documentElement.style.setProperty('--visible-height', `${currentHeight}px`);
-				// Match editor background color
-				document.body.style.backgroundColor = 'var(--editor-bg)';
-				wasKeyboardOpen = true;
-			} else if (wasKeyboardOpen && !isKeyboardOpen) {
-				// Only run this when transitioning from keyboard open to closed
+			} else if (!isKeyboardOpen) {
 				document.body.classList.remove('mobile-keyboard-open');
-				// Reset to full viewport height
-				document.documentElement.style.setProperty('--visible-height', '100vh');
-				// Reset background color
-				document.body.style.backgroundColor = '';
-				// Blur the editor only if it was focused to prevent keyboard from reopening
-				if (isEditorFocused) {
-					editorView.contentDOM.blur();
-				}
-				// Update preview when keyboard closes to show any changes made while typing
-				updatePreview();
-				wasKeyboardOpen = false;
 			}
 		}
-		
-		// Listen for viewport changes
+
 		if (window.visualViewport) {
 			window.visualViewport.addEventListener('resize', handleViewportChange);
 		} else {
