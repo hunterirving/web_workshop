@@ -1,8 +1,9 @@
-const CACHE_NAME = 'web-workshop-v10';
+const CACHE_NAME = 'web-workshop-v11';
 const urlsToCache = [
   '/web_workshop/',
   '/web_workshop/index.html',
   '/web_workshop/manifest.json',
+  '/web_workshop/resource-manifest.json',
   // CodeMirror dependencies
   'https://esm.sh/@codemirror/view@6',
   'https://esm.sh/@codemirror/state@6', 
