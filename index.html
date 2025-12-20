@@ -240,6 +240,31 @@
 		let updateTimer;
 		let editorView;
 		const preview = document.getElementById('preview');
+
+		// Stock images loaded from manifest - can be referenced by bare filename
+		let stockImages = new Set();
+
+		// Load stock image list from manifest
+		const stockImagesReady = fetch('resource-manifest.json')
+			.then(r => r.json())
+			.then(manifest => {
+				manifest.images.forEach(path => {
+					const filename = path.split('/').pop().toLowerCase();
+					stockImages.add(filename);
+				});
+			})
+			.catch(() => console.log('Could not load resource manifest'));
+
+		// Rewrite bare image filenames to use images/ prefix
+		function rewriteBareImageSrcs(html) {
+			return html.replace(/(<img\s[^>]*\bsrc\s*=\s*["'])([^"'/:]+\.(gif|png|jpg|jpeg|svg|webp))(["'])/gi,
+				(match, before, filename, ext, after) => {
+					if (stockImages.has(filename.toLowerCase())) {
+						return before + 'images/' + filename + after;
+					}
+					return match;
+				});
+		}
 		const editorPane = document.querySelector('.editor-pane');
 		const previewPane = document.querySelector('.preview-pane');
 		const storageKey = 'html-lab-content';
@@ -356,7 +381,9 @@
 			}
 			
 			// Use srcdoc to create a completely fresh document context
-			preview.srcdoc = code.trim() || '<!DOCTYPE html><html><head></head><body></body></html>';
+			// Rewrite bare stock image filenames to include images/ prefix
+			const processedCode = rewriteBareImageSrcs(code.trim()) || '<!DOCTYPE html><html><head></head><body></body></html>';
+			preview.srcdoc = processedCode;
 			
 			// Add our functionality after the iframe loads
 			const onLoad = () => {
@@ -392,7 +419,7 @@
 					if (doc.body) {
 						doc.body.appendChild(button);
 					}
-					
+
 					// Restore scroll position
 					setTimeout(() => {
 						try {
@@ -607,8 +634,8 @@
 				parent: document.getElementById('editor')
 			});
 
-			// Initial render
-			updatePreview();
+			// Initial render (wait for stock images manifest to load first)
+			stockImagesReady.then(() => updatePreview());
 
 			// Track editor focus and handle keyboard dismissal
 			editorView.contentDOM.addEventListener('focus', () => { isEditorFocused = true; });
