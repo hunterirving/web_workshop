@@ -272,8 +272,15 @@
 		const themeColorMeta = document.getElementById('themeColor');
 		let isFullscreen = false;
 
-		// Update status bar color based on current mode
+		// Update status bar color based on current mode and orientation
 		function updateThemeColor(isEditing) {
+			// In landscape mode (editor on left), always use editor color
+			if (window.innerWidth >= window.innerHeight) {
+				themeColorMeta.content = '#16181b';
+				return;
+			}
+
+			// In portrait mode, switch based on editing state
 			if (isEditing) {
 				themeColorMeta.content = '#16181b';
 			} else {
@@ -286,7 +293,7 @@
 						return;
 					}
 				} catch (e) {
-					// Ignore cross-origin errors
+					// Ignore errors
 				}
 				themeColorMeta.content = '#ffffff';
 			}
@@ -779,6 +786,12 @@
 		} else {
 			window.addEventListener('resize', handleViewportChange);
 		}
+
+		// Update theme color on orientation change
+		window.addEventListener('resize', () => {
+			const isEditing = document.body.classList.contains('mobile-keyboard-open');
+			updateThemeColor(isEditing);
+		});
 
 		// Initialize when page loads
 		initializeCodeMirror();
