@@ -265,6 +265,18 @@
 					return match;
 				});
 		}
+
+		// Expand <images> tags into gallery table
+		function expandImagesTag(html) {
+			return html.replace(/<images\s*\/?>/gi, () => {
+				const images = Array.from(stockImages).sort();
+				if (images.length === 0) return '<p>No images available</p>';
+				const rows = images.map(filename =>
+					`<tr><td>${filename}</td><td style="text-align:center;"><img src="images/${filename}"></td></tr>`
+				).join('');
+				return `<table border="1" cellpadding="8" cellspacing="0" style="width:100%;"><colgroup><col style="width:50%"><col style="width:50%"></colgroup>${rows}</table>`;
+			});
+		}
 		const editorPane = document.querySelector('.editor-pane');
 		const previewPane = document.querySelector('.preview-pane');
 		const storageKey = 'html-lab-content';
@@ -381,8 +393,8 @@
 			}
 			
 			// Use srcdoc to create a completely fresh document context
-			// Rewrite bare stock image filenames to include images/ prefix
-			const processedCode = rewriteBareImageSrcs(code.trim()) || '<!DOCTYPE html><html><head></head><body></body></html>';
+			// Expand <images> tag and rewrite bare stock image filenames
+			const processedCode = expandImagesTag(rewriteBareImageSrcs(code.trim())) || '<!DOCTYPE html><html><head></head><body></body></html>';
 			preview.srcdoc = processedCode;
 			
 			// Add our functionality after the iframe loads
