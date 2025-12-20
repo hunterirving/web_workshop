@@ -17,7 +17,7 @@ Craft handmade websites in their natural habitat (your web browser).
 - to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ### Stock Images
-A library of retro images is included. To browse them, type the magic tag `<images>` anywhere in the editor. Use them in your pages by filename: `<img src="coffee.gif">`.
+A library of retro images is included. To browse them, type the magic tag `<images>` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
 
 <br>
 <img src="images/hint.gif" width=60px>
