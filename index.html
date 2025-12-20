@@ -6,6 +6,7 @@
 	<title>Web Workshop</title>
 	<link rel="icon" href="resources/rollerskate.png">
 	<link rel="manifest" href="manifest.json">
+	<meta id="themeColor" name="theme-color" content="#ffffff">
 	<script type="module">
 		import {EditorView, keymap, placeholder, lineNumbers, Decoration} from "https://esm.sh/@codemirror/view@6"
 		import {EditorState, Compartment} from "https://esm.sh/@codemirror/state@6"
@@ -268,7 +269,39 @@
 		const editorPane = document.querySelector('.editor-pane');
 		const previewPane = document.querySelector('.preview-pane');
 		const storageKey = 'html-lab-content';
+		const themeColorMeta = document.getElementById('themeColor');
 		let isFullscreen = false;
+
+		// Update status bar color based on current mode
+		function updateThemeColor(isEditing) {
+			if (isEditing) {
+				themeColorMeta.content = '#16181b';
+			} else {
+				// Try to get the preview's background color
+				try {
+					const doc = preview.contentDocument;
+					if (doc && doc.body) {
+						const bgColor = preview.contentWindow.getComputedStyle(doc.body).backgroundColor;
+						themeColorMeta.content = rgbToHex(bgColor);
+						return;
+					}
+				} catch (e) {
+					// Ignore cross-origin errors
+				}
+				themeColorMeta.content = '#ffffff';
+			}
+		}
+
+		// Convert rgb/rgba string to hex
+		function rgbToHex(rgb) {
+			if (rgb.startsWith('#')) return rgb;
+			const match = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+			if (!match) return '#ffffff';
+			const r = parseInt(match[1]).toString(16).padStart(2, '0');
+			const g = parseInt(match[2]).toString(16).padStart(2, '0');
+			const b = parseInt(match[3]).toString(16).padStart(2, '0');
+			return `#${r}${g}${b}`;
+		}
 		let showLineNumbers = false;
 		let enableLineWrapping = false;
 		let lineNumbersCompartment;
@@ -424,10 +457,15 @@
 							// Ignore cross-origin errors
 						}
 					}, 10);
+
+					// Update status bar to match preview background (if not editing)
+					if (!document.body.classList.contains('mobile-keyboard-open')) {
+						updateThemeColor(false);
+					}
 				} catch (e) {
 					// Ignore cross-origin errors
 				}
-				
+
 				preview.removeEventListener('load', onLoad);
 			};
 			preview.addEventListener('load', onLoad);
@@ -639,16 +677,17 @@
 			editorView.contentDOM.addEventListener('blur', () => { 
 				isEditorFocused = false; 
 
-				// If we are on mobile and the keyboard mode is active, 
+				// If we are on mobile and the keyboard mode is active,
 				// exit immediately. Do not wait for visualViewport resize.
 				if (isMobileDevice() && document.body.classList.contains('mobile-keyboard-open')) {
-					
+
 					// 1. Hide editor immediately to prevent the "stutter/jump" visual
 					editorPane.style.opacity = '0';
-					
+
 					// 2. Remove the class to trigger layout engine (100% -> 50% height)
 					document.body.classList.remove('mobile-keyboard-open');
-					
+					updateThemeColor(false);
+
 					// 3. Wait for layout to settle, then restore scroll and opacity
 					requestAnimationFrame(() => requestAnimationFrame(() => {
 						if (editorView) {
@@ -706,18 +745,20 @@
 
 			if (isKeyboardOpen && isEditorFocused) {
 				document.body.classList.add('mobile-keyboard-open');
+				updateThemeColor(true);
 			} else if (!isKeyboardOpen) {
 				// Check if the class is still there (it might have been removed by blur already)
 				const wasKeyboardOpen = document.body.classList.contains('mobile-keyboard-open');
 
 				if (wasKeyboardOpen) {
-					// This is a fallback in case blur didn't catch it 
+					// This is a fallback in case blur didn't catch it
 					// (e.g. if the keyboard was dismissed via a gesture that didn't blur immediately)
 					if (editorView) {
 						const pos = editorView.state.selection.main.head;
 						editorPane.style.opacity = '0';
 						document.body.classList.remove('mobile-keyboard-open');
-						
+						updateThemeColor(false);
+
 						requestAnimationFrame(() => requestAnimationFrame(() => {
 							const lineBlock = editorView.lineBlockAt(pos);
 							const targetScroll = lineBlock.top - (editorView.dom.clientHeight / 2);
@@ -726,6 +767,7 @@
 						}));
 					} else {
 						document.body.classList.remove('mobile-keyboard-open');
+						updateThemeColor(false);
 					}
 				}
 			}
