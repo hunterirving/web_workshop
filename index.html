@@ -637,6 +637,9 @@
 						}
 						// Reveal the editor
 						editorPane.style.opacity = '';
+
+						// Update preview with any changes made while keyboard was open
+						updatePreview();
 					}));
 				}
 			});
