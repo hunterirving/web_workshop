@@ -6,18 +6,18 @@ Craft handmade websites in their natural habitat (your web browser).
 
 ## Usage
 
-1. Open `index.html` in your web browser (or <a href="https://hunterirving.github.io/web_workshop/">click here</a>)
+1. Open `index.html` in your web browser (<a href="https://hunterirving.github.io/web_workshop/">click here</a>)
 2. Start typing HTML in the editor pane
     - The preview pane will rerender when you're done typing
-    - Your work is automatically saved and restored when you reload the page
-3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to reopen exported files)
+    - Your work is automatically saved, and restored when you reload the page
+3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
 
 ### Options
 - to toggle <b>line numbers</b>, press <kbd>F1</kbd> (disabled by default)
 - to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ### Stock Images
-A library of retro images is included. To browse them, type the magic tag `<images>` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
+A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
 
 <br>
 <img src="images/hint.gif" width=60px>

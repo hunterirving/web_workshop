@@ -18,7 +18,8 @@ const stockImagesReady = fetch('resource-manifest.json')
 
 // Rewrite bare image filenames to use images/ prefix (case-insensitive, uses correct case)
 function rewriteBareImageSrcs(html) {
-	return html.replace(/(<img\s[^>]*\bsrc\s*=\s*["'])([^"'/:]+\.(gif|png|jpg|jpeg|svg|webp))(["'])/gi,
+	// Rewrite <img src="filename.ext">
+	html = html.replace(/(<img\s[^>]*\bsrc\s*=\s*["'])([^"'/:]+\.(gif|png|jpg|jpeg|svg|webp))(["'])/gi,
 		(match, before, filename, ext, after) => {
 			const original = stockImages.get(filename.toLowerCase());
 			if (original) {
@@ -26,11 +27,21 @@ function rewriteBareImageSrcs(html) {
 			}
 			return match;
 		});
+	// Rewrite url(filename.ext) in CSS
+	html = html.replace(/(url\(\s*["']?)([^"')/:]+\.(gif|png|jpg|jpeg|svg|webp))(["']?\s*\))/gi,
+		(match, before, filename, ext, after) => {
+			const original = stockImages.get(filename.toLowerCase());
+			if (original) {
+				return before + 'images/' + original + after;
+			}
+			return match;
+		});
+	return html;
 }
 
-// Expand <images> tags into gallery table
+// Expand <img src="?"> tags into gallery table
 function expandImagesTag(html) {
-	return html.replace(/<images\s*\/?>/gi, () => {
+	return html.replace(/<img\s+src\s*=\s*["']?\?["']?\s*\/?>/gi, () => {
 		const images = Array.from(stockImages.values()).sort();
 		if (images.length === 0) return '<p>No images available</p>';
 		const rows = images.map(filename =>
