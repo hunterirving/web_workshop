@@ -1,18 +1,12 @@
-const CACHE_NAME = 'web-workshop-v11';
+const CACHE_NAME = 'web-workshop-v12';
 const urlsToCache = [
   '/web_workshop/',
   '/web_workshop/index.html',
   '/web_workshop/manifest.json',
   '/web_workshop/resource-manifest.json',
-  // CodeMirror dependencies
-  'https://esm.sh/@codemirror/view@6',
-  'https://esm.sh/@codemirror/state@6', 
-  'https://esm.sh/@codemirror/commands@6',
-  'https://esm.sh/@codemirror/lang-html@6',
-  'https://esm.sh/@fsegurai/codemirror-theme-github-dark',
-  'https://esm.sh/@codemirror/language@6',
-  'https://esm.sh/@codemirror/autocomplete@6',
-  'https://esm.sh/@codemirror/search@6'
+  '/web_workshop/styles.css',
+  '/web_workshop/main.js',
+  '/web_workshop/codemirror-bundle.js'
 ];
 
 // Function to discover and cache all files in directories
@@ -87,20 +81,9 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(async cache => {
-        // Cache core files first
-        const coreFiles = urlsToCache.filter(url => !url.startsWith('https://'));
-        await cache.addAll(coreFiles);
-        
-        // Cache external dependencies with better error handling
-        const externalFiles = urlsToCache.filter(url => url.startsWith('https://'));
-        for (const url of externalFiles) {
-          try {
-            await cache.add(url);
-          } catch (error) {
-            console.log(`Failed to cache ${url}:`, error);
-          }
-        }
-        
+        // Cache all core files
+        await cache.addAll(urlsToCache);
+
         // Cache all resources programmatically
         await cacheResources(cache);
       })

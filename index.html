@@ -8,15 +8,7 @@
 	<link rel="manifest" href="manifest.json">
 	<link rel="stylesheet" href="styles.css">
 	<script type="module">
-		import {EditorView, keymap, placeholder, lineNumbers, Decoration} from "https://esm.sh/@codemirror/view@6"
-		import {EditorState, Compartment} from "https://esm.sh/@codemirror/state@6"
-		import {defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap} from "https://esm.sh/@codemirror/commands@6"
-		import {closeBrackets, closeBracketsKeymap} from "https://esm.sh/@codemirror/autocomplete@6"
-		import {html} from "https://esm.sh/@codemirror/lang-html@6"
-		import {githubDark} from "https://esm.sh/@fsegurai/codemirror-theme-github-dark"
-		import {indentUnit} from "https://esm.sh/@codemirror/language@6"
-		import {search, searchKeymap, closeSearchPanel, openSearchPanel} from "https://esm.sh/@codemirror/search@6"
-
+		import {EditorView, keymap, placeholder, lineNumbers, Decoration, EditorState, Compartment, defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, html, githubDark, indentUnit, search, searchKeymap, closeSearchPanel, openSearchPanel} from "./codemirror-bundle.js"
 		window.CodeMirror = {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers, Decoration};
 	</script>
 </head>
