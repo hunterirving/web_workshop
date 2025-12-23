@@ -1,0 +1,205 @@
+:root {
+	--text-color: #f8f8f2;
+	--editor-bg: #16181b;
+	scrollbar-color: grey var(--editor-bg);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html, body {
+	overscroll-behavior: none;
+	background-color: var(--editor-bg);
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	font-family: monospace;
+	background: var(--bg-color);
+	color: var(--text-color);
+	height: 100%;
+	display: flex;
+	overflow: hidden;
+}
+
+.editor-pane {
+	width: 50%;
+	height: 100%;
+	position: relative;
+	transition: opacity 0.1s ease-out; /* Added transition for smoother opacity hack */
+}
+
+.preview-pane {
+	width: 50%;
+	height: 100%;
+	position: relative;
+}
+
+.preview-pane.fullscreen {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+	background: white;
+}
+
+/* Hide editor when preview is fullscreen */
+.editor-pane.hidden {
+	display: none;
+}
+
+#editor {
+	width: 100%;
+	height: 100%;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 21px;
+}
+
+/* CodeMirror styling */
+.cm-editor {
+	width: 100%;
+	height: 100%;
+	background: var(--editor-bg);
+	color: var(--text-color);
+}
+
+.cm-placeholder {
+	color: #666;
+	opacity: 0.6;
+}
+
+.cm-content {
+	padding: 15px;
+	font-size: 21px;
+	line-height: 1.6;
+}
+
+.cm-gutters {
+	font-size: 21px;
+	line-height: 1.6;
+	user-select: none;
+}
+
+.cm-lineNumbers .cm-gutterElement {
+	line-height: 1.6;
+	font-size: 21px;
+}
+
+.ͼ1 .cm-lineNumbers .cm-gutterElement {
+	padding-right: 0;
+	padding-left: 8px;
+}
+
+.cm-focused {
+	outline: none;
+}
+
+/* Force tab size to 2 spaces - override theme defaults */
+.cm-editor .cm-content,
+.cm-editor .cm-line,
+.cm-editor {
+	tab-size: 2 !important;
+	-moz-tab-size: 2 !important;
+}
+
+/* Disable overscroll on all CodeMirror elements */
+.cm-editor, .cm-content, .cm-scroller, .cm-scrollElement {
+	overscroll-behavior: none !important;
+}
+
+/* Simplify search panel - hide all buttons, labels, and replace input */
+.cm-search button {
+	display: none !important;
+}
+
+.cm-search {
+	background-color: #16181b;
+}
+
+.cm-search label {
+	display: none !important;
+}
+
+.cm-search input[name="replace"] {
+	display: none !important;
+}
+
+/* Style search input to match editor text size */
+.cm-search input[name="search"] {
+	font-size: 21px !important;
+	width: 100% !important;
+	border-radius: 50px !important;
+	padding-left: 0.8em !important;
+	padding-right: 0.8em !important;
+	padding-bottom: 7px !important;
+}
+
+.cm-panels-bottom {
+	border-radius: 0px !important;
+}
+
+.cm-panels-bottom {
+	border-top: none !important;
+
+}
+
+#preview {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: white;
+	overflow: auto;
+}
+
+/* Vertical layout for narrow screens (height > width) */
+@media (max-aspect-ratio: 1/1) {
+	body {
+		flex-direction: column;
+	}
+
+	.editor-pane {
+		width: 100%;
+		height: 50%;
+		order: 2;
+	}
+
+	.preview-pane {
+		width: 100%;
+		height: 50%;
+		order: 1;
+		padding-top: env(safe-area-inset-top);
+	}
+}
+
+/* Mobile: fullscreen editor when keyboard is open */
+@media (pointer: coarse), (pointer: none) {
+	body.mobile-keyboard-open .preview-pane {
+		display: none;
+	}
+
+	body.mobile-keyboard-open .editor-pane {
+		position: fixed;
+		top: calc(var(--visual-viewport-offset-top, 0px));
+		left: 0;
+		width: 100%;
+		height: var(--visual-viewport-height, 100%);
+		max-height: var(--visual-viewport-height, 100%);
+		order: 1;
+		overscroll-behavior: none;
+		overflow: hidden;
+	}
+
+	body.mobile-keyboard-open .editor-pane #editor,
+	body.mobile-keyboard-open .editor-pane .cm-editor {
+		height: 100% !important;
+		max-height: 100% !important;
+	}
+}
