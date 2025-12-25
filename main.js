@@ -393,6 +393,20 @@ function initializeCodeMirror() {
 					...defaultKeymap
 				]),
 				html(),
+				// Auto-close <style> and <script> tags (not handled by default html() extension)
+				EditorView.inputHandler.of((view, from, to, text) => {
+					if (text !== '>') return false;
+					const before = view.state.doc.sliceString(Math.max(0, from - 20), from);
+					const match = before.match(/<(style|script)(\s[^>]*)?$/i);
+					if (!match) return false;
+					const tagName = match[1].toLowerCase();
+					const closingTag = `</${tagName}>`;
+					view.dispatch({
+						changes: { from, to, insert: '>' + closingTag },
+						selection: { anchor: from + 1 }
+					});
+					return true;
+				}),
 				githubDark,
 				indentUnit.of("\t"),
 				placeholder("Build something with HTML..."),
