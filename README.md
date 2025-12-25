@@ -19,6 +19,22 @@ Craft handmade websites in their natural habitat (your web browser).
 ### Stock Images
 A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
 
+### Boilerplate
+Type `<!>` to insert the following starter HTML:
+
+```html
+<html>
+	<head>
+		<style>
+
+		</style>
+	</head>
+	<body>
+
+	</body>
+</html>
+```
+
 <br>
 <img src="images/hint.gif" width=60px>
 <i>
