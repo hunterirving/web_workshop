@@ -24,14 +24,14 @@ Type `<!>` to insert the following starter HTML:
 
 ```html
 <html>
-	<head>
-		<style>
+  <head>
+    <style>
 
-		</style>
-	</head>
-	<body>
-
-	</body>
+    </style>
+  </head>
+  <body>
+    
+  </body>
 </html>
 ```
 
