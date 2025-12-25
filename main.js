@@ -394,9 +394,31 @@ function initializeCodeMirror() {
 				]),
 				html(),
 				// Auto-close <style> and <script> tags (not handled by default html() extension)
+				// Also expand <!> into HTML boilerplate
 				EditorView.inputHandler.of((view, from, to, text) => {
 					if (text !== '>') return false;
 					const before = view.state.doc.sliceString(Math.max(0, from - 20), from);
+					// Check for <!> boilerplate trigger
+					if (before.endsWith('<!')) {
+						const boilerplate = `<html>
+\t<head>
+\t\t<style>
+\t\t\t
+\t\t</style>
+\t</head>
+\t<body>
+\t\t
+\t</body>
+</html>`;
+						const startPos = from - 2;
+						const cursorPos = startPos + boilerplate.indexOf('<body>') + 9;
+						view.dispatch({
+							changes: { from: startPos, to: from, insert: boilerplate },
+							selection: { anchor: cursorPos }
+						});
+						return true;
+					}
+					// Check for <style> or <script>
 					const match = before.match(/<(style|script)(\s[^>]*)?$/i);
 					if (!match) return false;
 					const tagName = match[1].toLowerCase();
