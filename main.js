@@ -65,9 +65,12 @@ function toggleFullscreen() {
 	if (isFullscreen) {
 		previewPane.classList.add('fullscreen');
 		editorPane.classList.add('hidden');
+		// Set iframe height to actual visible height (fixes iOS Safari toolbar issue)
+		preview.style.height = window.innerHeight + 'px';
 	} else {
 		previewPane.classList.remove('fullscreen');
 		editorPane.classList.remove('hidden');
+		preview.style.height = '';
 	}
 
 	// Update button title in iframe
