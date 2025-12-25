@@ -17,7 +17,7 @@ Craft handmade websites in their natural habitat (your web browser).
 - to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ### Stock Images
-A library of stock images is included for your convenience. To browse them, type `<img src=?>` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
+A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor. You can use them in your pages like so: `<img src="coffee.gif">`.
 
 ### Boilerplate
 Type `<!>` to insert the following starter HTML:
