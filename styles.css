@@ -21,7 +21,7 @@ html {
 
 body {
 	font-family: monospace;
-	background: var(--bg-color);
+	background: var(--editor-bg);
 	color: var(--text-color);
 	height: 100%;
 	display: flex;
@@ -46,9 +46,7 @@ body {
 	top: 0;
 	left: 0;
 	width: 100vw;
-	width: 100dvw;
 	height: 100vh;
-	height: 100dvh;
 	z-index: 9999;
 	background: white;
 }
@@ -146,11 +144,7 @@ body {
 
 .cm-panels-bottom {
 	border-radius: 0px !important;
-}
-
-.cm-panels-bottom {
 	border-top: none !important;
-
 }
 
 #preview {

@@ -60,7 +60,6 @@ let lineNumbersCompartment;
 let lineWrappingCompartment;
 
 function toggleFullscreen() {
-
 	isFullscreen = !isFullscreen;
 
 	if (isFullscreen) {
@@ -358,7 +357,7 @@ function initializeCodeMirror() {
 		return;
 	}
 
-	const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers, Decoration, DecorationSet} = window.CodeMirror;
+	const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, history, closeBrackets, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers} = window.CodeMirror;
 
 	// Load saved content and editor settings
 	const savedContent = loadFromStorage();
