@@ -1,4 +1,4 @@
-# Web Workshop 🛼
+# Web Workshop 🚧
 
 Craft handmade websites in their natural habitat (your web browser).
 

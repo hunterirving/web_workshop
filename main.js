@@ -139,7 +139,7 @@ function updateMainPageTitleAndFavicon(title, favicon) {
 	if (favicon) {
 		faviconLink.href = favicon;
 	} else {
-		faviconLink.href = 'resources/rollerskate.png';
+		faviconLink.href = 'resources/construction.png';
 	}
 }
 

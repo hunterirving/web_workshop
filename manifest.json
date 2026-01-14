@@ -9,12 +9,12 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "resources/rollerskate_padded.png",
+      "src": "resources/construction_padded.png",
       "sizes": "200x200",
       "type": "image/png"
     },
     {
-      "src": "resources/rollerskate_padded.png",
+      "src": "resources/construction_padded.png",
       "sizes": "192x192",
       "type": "image/png"
     }
