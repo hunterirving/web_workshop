@@ -85,8 +85,8 @@
     "/web_workshop/images/y2k.gif"
   ],
   "resources": [
-    "/web_workshop/resources/fullscreen.svg",
-    "/web_workshop/resources/rollerskate.png",
-    "/web_workshop/resources/rollerskate_padded.png"
+    "/web_workshop/resources/construction.png",
+    "/web_workshop/resources/construction_padded.png",
+    "/web_workshop/resources/fullscreen.svg"
   ]
 }
