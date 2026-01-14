@@ -45,7 +45,7 @@ function expandImagesTag(html) {
 		const images = Array.from(stockImages.values()).sort();
 		if (images.length === 0) return '<p>No images available</p>';
 		const rows = images.map(filename =>
-			`<tr class="stock-image-row" data-filename="${filename}" style="cursor:pointer;"><td>${filename}</td><td style="text-align:center;"><img src="images/${filename}" style="max-width:100%;height:auto;"></td></tr>`
+			`<tr class="stock-image-row" data-filename="${filename}" style="cursor:pointer;user-select:none;"><td>${filename}</td><td style="text-align:center;"><img src="images/${filename}" style="max-width:100%;height:auto;pointer-events:none;"></td></tr>`
 		).join('');
 		return `<table class="stock-image-table" border="1" cellpadding="8" cellspacing="0" style="max-width:100%;box-sizing:border-box;table-layout:fixed;"><colgroup><col style="width:50%"><col style="width:50%"></colgroup>${rows}</table>`;
 	});
