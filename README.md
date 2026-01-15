@@ -25,7 +25,7 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
 
 ### Stock Images
-A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor, then click to select an image from the table.
+A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor, then click to select an image from the resultant table.
 
 Alternatively, if you know the name of the image you'd like to use, you can add it to your project like so: `<img src="coffee.gif">`.
 
@@ -46,14 +46,13 @@ Type `<!>` to insert the following starter HTML:
 </html>
 ```
 
-<br>
-<img src="images/hint.gif" width=60px>
-<i>
-Wanna make websites on your phone? Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
-
 ### Options
 - to toggle <b>line numbers</b>, press <kbd>F1</kbd> (disabled by default)
 - to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
+
+<img src="images/hint.gif" width=60px>
+<i>
+Wanna make websites on your phone? Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
 
 ## Technologies Used
 

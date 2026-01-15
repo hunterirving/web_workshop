@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📲</text></svg>">
 	<title>PWA Installation Guide</title>
 	<style>
 		html {
@@ -71,12 +71,17 @@
 			padding: 10px;
 			margin: 20px 0;
 			font-weight: bold;
+			font-size: 1.15em;
 			display: none;
 		}
 
 		.lightbulb {
 			text-shadow: 0px 0px 1px black;
+			font-size: 1.4em;
+			vertical-align: middle;
+			line-height: 1;
 		}
+
 		
 		.section {
 			margin: 30px 0;
@@ -84,6 +89,7 @@
 			padding-top: 16px;
 			background-color: #fff;
 			border: 1px solid #ccc;
+			font-size: 1.1em;
 		}
 		
 		ol {
@@ -112,36 +118,33 @@
 			padding-left: 10px;
 			margin: 15px 0;
 		}
-		
-		footer {
-			text-align: center;
-			margin-top: 50px;
-			padding-top: 20px;
-			border-top: 1px solid #333;
-			font-size: 0.9em;
-			color: #666;
+
+		.note code {
+			font-style: normal;
 		}
 		
 		/* Dark mode styles */
 		@media (prefers-color-scheme: dark) {
 			body {
-				background-color: #1a1a1a;
+				background-color: #141414;
 				color: #ffffff;
 			}
-			
+
 			h1, h2 {
 				color: #ffffff;
 				border-color: #666;
 			}
-			
+
 			.toc, .section {
-				background-color: #2d2d2d;
+				background-color: #242424;
 				border: none;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 			}
-			
+
 			.auto-detected {
 				background-color: #2d4a2d;
 				border: none;
+				text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.35);
 			}
 			
 			a {
@@ -195,19 +198,14 @@
 	</style>
 </head>
 <body>
-	<h1>Installing Progressive Web Apps</h1>
-	<p class="subtitle"><em>A comprehensive guide for installing PWAs across different operating systems and browsers</em></p>
+	<h1>PWA Installation Guide</h1>
 	
-	<div id="auto-detected" class="auto-detected">
-		<p><span class="lightbulb">💡</span> Based on your system, you might want to jump directly to: <span id="detected-link"></span></p>
-	</div>
-	
-	<div class="toc">
+	<!-- <div class="toc">
 		<h3>Table of Contents</h3>
 		<ul>
 			<li><a href="#about-pwas">About PWAs</a></li>
-			<li><a href="#chrome-desktop">Chrome (Windows/Mac/Linux)</a></li>
-			<li><a href="#firefox-desktop">Firefox (Windows/Mac/Linux)</a></li>
+			<li><a href="#chrome-desktop">Chrome (Desktop)</a></li>
+			<li><a href="#firefox-desktop">Firefox (Desktop)</a></li>
 			<li><a href="#safari-mac">Safari (macOS)</a></li>
 			<li><a href="#edge-windows">Microsoft Edge (Windows)</a></li>
 			<li><a href="#chrome-android">Chrome (Android)</a></li>
@@ -216,23 +214,22 @@
 			<li><a href="#troubleshooting">Troubleshooting</a></li>
 			<li><a href="#try-these-pwas">Progressive Web Apps You Can Install Right Now</a></li>
 		</ul>
-	</div>
+	</div> -->
 
 	<div id="about-pwas" class="section">
-		<h2>About Progressive Web Apps (PWAs)</h2>
+		<h2>About Progressive Web Apps</h2>
 		
-		<h3>What are PWAs?</h3>
-		<p>Progressive Web Apps are web applications that use modern web technologies to provide a native app-like experience across desktop and mobile platforms. They combine the best of web and mobile apps, offering features like offline functionality, push notifications, and home screen installation.</p>
+		<!-- <h3>What are PWAs?</h3> -->
+		<p>Progressive Web Apps (PWAs) are websites that can be installed like native apps. PWAs can work offline, send push notifications, and be distributed without reliance on or approval from centralized app stores.</p>
+		
+		
+		<!-- <h3>Installing and Using PWAs</h3> -->
+
+		<p>Use the browser-specific instructions below to install Progressive Web Apps directly from supported websites. Once installed, PWAs work just like regular "app store" apps.</p>
+
 		
 		<p>To explore the full range of PWA capabilities, visit <a href="https://whatpwacando.today/" target="_blank" rel="noopener">What PWA Can Do Today</a>.</p>
-		
-		<h3>How to Install and Use PWAs</h3>
-		<ul>
-			<li><strong>Installation:</strong> Use the browser-specific methods outlined below to install PWAs directly from supported websites</li>
-			<li><strong>Usage:</strong> Once installed, PWAs appear as regular apps on your device and can work offline, send notifications, and provide fast, responsive experiences</li>
-			<li><strong>Updates:</strong> PWAs update automatically in the background, ensuring you always have the latest version</li>
-		</ul>
-		
+
 		<!-- <h3>Creating PWAs</h3>
 		<p>To make your web application installable as a PWA, it must have the following:</p>
 		<ul>
@@ -242,98 +239,63 @@
 		</ul> -->
 	</div>
 
-	<div id="chrome-desktop" class="section">
-		<h2>Chrome (Windows/Mac/Linux)</h2>
-		<ol>
-			<li>Open Chrome and navigate to the website you'd like to install as a PWA</li>
-			<li>Click the install icon in the address bar (usually appears as a computer with a down arrow)</li>
-				<ul>
-					<li>Alternatively, go to the three-dot menu → Cast, save, and share → Install page as app...</li>
-				</ul>
-			</li>
-			<li>Click "Install"</li>
-			<li>The app will be installed and can be found in your applications folder or Start menu</li>
-		</ol>
-		<p class="note">Note: The install option will only be available if the website meets PWA requirements.</p>
+	<div id="auto-detected" class="auto-detected">
+		<p><span class="lightbulb">💡</span> Based on your system, you might want to jump directly to: <span id="detected-link"></span></p>
 	</div>
 
-	<div id="firefox-desktop" class="section">
-		<h2>Firefox (Windows/Mac/Linux)</h2>
-		<p><strong>⚠️ The desktop version of Firefox lacks PWA support.</strong></p>
-		<p>In 2020, Mozilla stated that <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682593#c8">"there is currently no plan for PWA support in Firefox"</a>. While Firefox Beta 141+ has introduced <a href="https://www.omgubuntu.co.uk/2025/03/firefox-nightly-supports-web-apps-taskbar-tabs">some web app functionality</a>, it remains incomplete.</p>
-		
-		<p><strong>Recommendation:</strong> Use Chrome, Safari, or Microsoft Edge for better PWA support.</p>
-
-		<p class="note">Alternative: Try the <a href="https://github.com/filips123/PWAsForFirefox">PWAsForFirefox extension</a>, though it requires the installation of a helper application, among other caveats.</p>
-	</div>
-
-	<div id="safari-mac" class="section">
-		<h2>Safari (macOS)</h2>
-		<ol>
-			<li>Open Safari and navigate to the website you'd like to install as a PWA</li>
-			<li>Click "File" in the menu bar → "Add to Dock"
-				<ul>
-					<li>Alternatively, click the share button and select "Add to Dock"</li>
-				</ul>
-			</li>
-			<li>The PWA will appear in your Dock and Applications folder</li>
-			<li>When launched, it will open in its own window without browser UI</li>
-		</ol>
-		<p class="note">Note: Safari's PWA support on macOS is relatively new (macOS Sonoma 14+). Older versions may not support this feature.</p>
-	</div>
-
-	<div id="edge-windows" class="section">
-		<h2>Microsoft Edge (Windows)</h2>
-		<ol>
-			<li>Open Microsoft Edge and navigate to the website you'd like to install as a PWA</li>
-			<li>Look for the install app icon in the address bar</li>
-			<li>Click the install icon, or go to the three-dot menu → "Apps" → "Install this site as an app"</li>
-			<li>Click "Install"</li>
-			<li>The app will be installed and accessible from the Start menu</li>
-		</ol>
+	<div id="safari-ios" class="section">
+		<h2>Safari (iOS / iPadOS)</h2>
+		<p>Navigate to a website that supports PWA installation, then tap:</p>
+		<p><code>···</code> → Share → More → Add to Home Screen → Add</p>
+		<p class="note">Note: on iOS, all browsers use Safari's rendering engine. You can install PWAs using other browsers, but the effect will be the same as if they were installed from Safari.</p>
 	</div>
 
 	<div id="chrome-android" class="section">
 		<h2>Chrome (Android)</h2>
-		<ol>
-			<li>Open Chrome on your Android device and navigate to the website you'd like to install as a PWA</li>
-			<li>Tap the three-dot menu in the top right</li>
-			<li>Select "Add to Home screen"</li>
-			<li>Tap "Install"</li>
-			<li>Confirm installation</li>
-			<li>The PWA will be added to your app drawer and can be dragged out to the home screen for easy access</li>
-		</ol>
+		<p>Navigate to a website that supports PWA installation, then tap:</p>
+		<p><code>⋮</code> → Add to Home screen → Install.</p>
 	</div>
 
 	<div id="firefox-android" class="section">
 		<h2>Firefox (Android)</h2>
-		<ol>
-			<li>Open Firefox on your Android device and navigate to the website you'd like to install as a PWA</li>
-			<li>Tap the three-dot menu</li>
-			<li>Select "Add app to Home screen"</li>
-			<li>Tap the "Add to home screen" button or drag the app icon to its desired location</li>
-			<li>The PWA will be added to your home screen</li>
-		</ol>
+		<p>Navigate to a website that supports PWA installation, then tap:</p>
+		<p><code>⋮</code> → Add app to Home screen → Add to home screen.</p>
 	</div>
 
-	<div id="safari-ios" class="section">
-		<h2>Safari (iOS/iPadOS)</h2>
-		<ol>
-			<li>Open Safari on your iOS device and navigate to the website you'd like to install as a PWA</li>
-			<li>Tap the Share button (square with an arrow pointing up)</li>
-			<li>Scroll down and tap "Add to Home Screen"</li>
-			<li>Enter a name for the app and tap "Add"</li>
-			<li>The PWA will be added to your home screen</li>
-		</ol>
-		<p class="note">Note: iOS only allows PWA installation through Safari.</p>
+	<div id="safari-mac" class="section">
+		<h2>Safari (macOS)</h2>
+		<p>Navigate to a website that supports PWA installation, then click File → Add to Dock.</p>
+		<p>The app will appear in your Dock and Applications folder, and will open in its own window without browser UI.</p>
+		<!-- <p class="note">Note: Requires macOS Sonoma 14+. Older versions may not support this feature.</p> -->
 	</div>
 
-	<div id="troubleshooting" class="section">
+	<div id="edge-windows" class="section">
+		<h2>Microsoft Edge (Windows)</h2>
+		<p>Navigate to a website that supports PWA installation, then click:</p>
+		<p><code>···</code> → Apps → Install this site as an app.</p>
+		<p>The app will appear in the Start menu.</p>
+	</div>
+
+	<div id="chrome-desktop" class="section">
+		<h2>Chrome (Desktop)</h2>
+		<p>Navigate to a website that supports PWA installation, click the install icon (downward pointing arrow) in the address bar, then click Install.</p>
+		<!-- <p class="note">Alternatively: <code>⋮</code> → Cast, save, and share → Install page as app</p> -->
+		<p>The app will appear in your applications folder or Start menu.</p>
+	</div>
+
+	<div id="firefox-desktop" class="section">
+		<h2>Firefox (Desktop)</h2>
+		<p><strong>⚠️ The desktop version of Firefox lacks PWA support.</strong><br>Use <a href="#chrome-desktop">Chrome</a>, <a href="#safari-mac">Safari</a>, or <a href="#edge-windows">Edge</a> instead.</p>
+		<p>In 2020, Mozilla stated that <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682593#c8">"there is currently no plan for PWA support in Firefox"</a>.<br>
+		While Firefox Beta 141+ has introduced <a href="https://www.omgubuntu.co.uk/2025/03/firefox-nightly-supports-web-apps-taskbar-tabs">some web app functionality</a>, it remains incomplete.</p>
+	</div>
+
+	<!-- <div id="troubleshooting" class="section">
 		<h2>Troubleshooting</h2>
 		<h3>Install Option Not Available?</h3>
 		<ul>
 			<li>Ensure the website is served over HTTPS</li>
-			<li>Check that the website meets the requirements for PWA installation</li>
+			<li>Check that the website meets <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable#installability">the requirements</a> for PWA installation</li>
 			<li>Try refreshing the page or clearing browser cache</li>
 		</ul>
 		
@@ -348,17 +310,23 @@
 		<h3>Can't Find Installed PWA?</h3>
 		<ul>
 			<li><strong>Windows:</strong> Check Start menu, Desktop, or Apps list</li>
-			<li><strong>Mac:</strong> Look in Applications folder or Launchpad</li>
+			<li><strong>Mac:</strong> Check Applications folder or Launchpad</li>
 			<li><strong>Android:</strong> Check home screen, app drawer, or search</li>
-			<li><strong>iOS:</strong> Look on home screen or in App Library</li>
+			<li><strong>iOS:</strong> Check home screen</li>
 		</ul>
-	</div>
+	</div> -->
 
 	<div id="try-these-pwas" class="section">
 		<h2>Progressive Web Apps You Can Install Right Now</h2>
 		
 		<h3><a href="https://hunterirving.github.io/web_workshop/" target="_blank">Web Workshop</a></h3>
 		<p class="note">Craft handmade websites in their natural habitat with this in-browser HTML editor. Works great on desktop or mobile.</p>
+
+		<h3><a href="https://hunterirving.com">HunterIrving.com</a></h3>
+		<p class="note">Experience Huntergram, Gobbler, and more in the dedicated hunterirving.com PWA.</p>
+
+		<h3><a href="https://hacksburg.org">Hacksburg.org</a></h3>
+		<p class="note">Stay up to date with goings on at Hacksburg, a makerspace in Blacksburg, VA.</p>
 
 		<h3><a href="https://hunterirving.github.io/klaxon/" target="_blank">Klaxon</a></h3>
 		<p class="note">A chess clock in your pocket, optimized for touchscreen devices and competitive play.</p>		
@@ -368,16 +336,10 @@
 	
 		<h3><a href="https://hunterirving.github.io/pop_viz/">Pop Viz</a></h3>
 		<p class="note">What does 100,000 people look like? Don't ask me — install this Progressive Web App.</p>
-		
-		<h3><a href="https://hunterirving.com">HunterIrving.com</a></h3>
-		<p class="note">Experience Huntergram, Gobbler, and more in the dedicated hunterirving.com PWA.</p>
 
-		<h3><a href="https://hacksburg.org">Hacksburg.org</a></h3>
-		<p class="note">Stay up to date with goings on at Hacksburg, a makerspace in Blacksburg, VA.</p>
+		<h3><a href="https://hunterirving.github.io/web_workshop/pages/snake/">SNAKE</a></h3>
+		<p class="note">The classic game, reimagined for the modern era.</p>
 	</div>
-	<footer>
-		<p>This guide covers the most common browsers and platforms as of 2025.<br>PWA support continues to evolve.</p>
-	</footer>
 
 	<script>
 		function detectPlatform() {
