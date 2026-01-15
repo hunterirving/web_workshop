@@ -388,6 +388,11 @@ function initializeCodeMirror() {
 
 	const {EditorView, EditorState, Compartment, keymap, defaultKeymap, indentWithTab, html, githubDark, indentUnit, placeholder, undo, redo, history, closeBrackets, search, searchKeymap, closeSearchPanel, openSearchPanel, lineNumbers} = window.CodeMirror;
 
+	// Custom phrase overrides for CodeMirror UI (search panel)
+	const customPhrases = EditorState.phrases.of({
+		"Find": "Find..."
+	});
+
 	// Load saved content and editor settings
 	const savedContent = loadFromStorage();
 	loadEditorSettings();
@@ -403,6 +408,7 @@ function initializeCodeMirror() {
 		state: EditorState.create({
 			doc: savedContent,
 			extensions: [
+				customPhrases,
 				history(),
 				search(),
 				closeBrackets(),
@@ -506,6 +512,20 @@ function initializeCodeMirror() {
 			closeSearchPanel(editorView) || openSearchPanel(editorView);
 		}
 	});
+
+	// Disable browser autocomplete on search panel inputs when they appear
+	const editorElement = document.getElementById('editor');
+	const searchInputObserver = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			for (const node of mutation.addedNodes) {
+				if (node.nodeType === Node.ELEMENT_NODE) {
+					const searchInputs = node.querySelectorAll?.('.cm-search input[name="search"], .cm-search input[name="replace"]');
+					searchInputs?.forEach(input => input.setAttribute('autocomplete', 'off'));
+				}
+			}
+		}
+	});
+	searchInputObserver.observe(editorElement, { childList: true, subtree: true });
 }
 
 // Mobile keyboard detection
