@@ -12,14 +12,12 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
 - [Hunter's Club-Mate Fan Club](https://hunterirving.github.io/web_workshop/pages/club-mate) - A shrine to the beloved hacker beverage
 - [Hunter's Trinket Collection](https://hunterirving.github.io/web_workshop/pages/trinkets) - A virtual museum to house five cherished tchotchkes
 - [SNAKE](https://hunterirving.github.io/web_workshop/pages/snake) - The classic game, reimagined for the modern era
-- [Pizza Heaven](https://hunterirving.github.io/web_workshop/pages/pizza_heaven) - A trusted name in Pizza
-- [Avocado Warehouse](https://hunterirving.github.io/web_workshop/pages/avocado_warehouse) - Your one stop shop for Internet avocados
 - [Jenno's Picnic World](https://hunterirving.github.io/web_workshop/pages/jennos_picnic_world) - An interactive digital collage
 
 ## How to Play
 
-1. Open `index.html` in your web browser (<a href="https://hunterirving.github.io/web_workshop/">click here!</a>)
-2. Start typing HTML in the editor pane
+1. Open `index.html` in your web browser (<a href="https://hunterirving.github.io/web_workshop/">click here</a>!)
+2. Type some HTML in the editor pane
     - The preview pane will rerender when you're done typing
     - Your work is automatically saved, and restored when you reload the page
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
