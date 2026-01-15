@@ -4,7 +4,9 @@ Craft handmade websites in their natural habitat (your web browser).
 
 <img src="images/pika_construction.gif">
 
-Web Workshop was born as a teaching tool for web development classes, with the goal of making web publishing more accessible, especially to those who have never written code before. By stripping away complexity and focusing on the basics, Web Workshop turns website building into something playful and toylike; a creative playground where you can experiment, break things, and watch your ideas materialize in real-time.
+Web Workshop was born as a teaching tool for web development classes, with the goal of making web publishing more accessible, especially to those who have never written code before.
+
+By stripping away complexity and focusing on the basics, Web Workshop turns website building into something playful and toylike; a creative playground where you can experiment, break things, and watch your ideas materialize in real-time.
 
 Recently, Web Workshop has become an editor of choice for <a href="https://html.energy/html-day/2025/index.html">HTML Day</a>, an annual celebration of handmade websites and the creative web.
 
@@ -21,10 +23,6 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
     - The preview pane will rerender when you're done typing
     - Your work is automatically saved, and restored when you reload the page
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
-
-### Options
-- to toggle <b>line numbers</b>, press <kbd>F1</kbd> (disabled by default)
-- to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ### Stock Images
 A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor, then click to select an image from the table.
@@ -52,6 +50,10 @@ Type `<!>` to insert the following starter HTML:
 <img src="images/hint.gif" width=60px>
 <i>
 Wanna make websites on your phone? Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i>
+
+### Options
+- to toggle <b>line numbers</b>, press <kbd>F1</kbd> (disabled by default)
+- to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ## Technologies Used
 
