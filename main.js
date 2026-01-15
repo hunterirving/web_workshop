@@ -426,7 +426,8 @@ function initializeCodeMirror() {
 					const before = view.state.doc.sliceString(Math.max(0, from - 20), from);
 					// Check for <!> boilerplate trigger
 					if (before.endsWith('<!')) {
-						const boilerplate = `<html>
+						const boilerplate = `<!DOCTYPE html>
+<html>
 \t<head>
 \t\t<style>
 \t\t\t

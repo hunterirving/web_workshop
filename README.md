@@ -37,6 +37,7 @@ Alternatively, if you know the name of the image you'd like to use, you can add 
 Type `<!>` to insert the following starter HTML:
 
 ```html
+<!DOCTYPE html>
 <html>
   <head>
     <style>
