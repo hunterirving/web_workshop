@@ -8,6 +8,9 @@ Web Workshop was born as a teaching tool for web development classes, with the g
 
 By stripping away complexity and focusing on the basics, Web Workshop turns website building into something playful and toylike; a creative playground where you can experiment, break things, and watch your ideas materialize in real-time.
 
+<a href="https://hunterirving.github.io/web_workshop/">
+<img src="readme_images/picnic.png" width="650"></a><br>
+
 Recently, Web Workshop has become an editor of choice for <a href="https://html.energy/html-day/2025/index.html">HTML Day</a>, an annual celebration of handmade websites and the creative web.
 
 ## Built with Web Workshop
