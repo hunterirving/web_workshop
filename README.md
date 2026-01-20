@@ -29,7 +29,7 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
 
 ### Stock Images
-A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor, then click to select an image from the resulting table.
+A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor pane, then click to select an image from the resulting table.
 
 <a href="https://hunterirving.github.io/web_workshop/">
 <img src="readme_images/stock_images.png" width="650"></a>
