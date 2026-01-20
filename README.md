@@ -31,6 +31,10 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
 ### Stock Images
 A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor, then click to select an image from the resulting table.
 
+<a href="https://hunterirving.github.io/web_workshop/">
+<img src="readme_images/stock_images.png" width="650"></a>
+<br><br>
+
 Alternatively, if you know the name of the image you'd like to use, you can add it to your project like so: `<img src="coffee.gif">`.
 
 ### Boilerplate
