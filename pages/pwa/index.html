@@ -66,23 +66,14 @@
 		}
 		
 		.auto-detected {
-			--r: 8px; /* control the stamp radius */
-			background: linear-gradient(to top right, #2a2a5a 0%, #ffffcc 100%);
-			padding: var(--r);
-			margin: 20px 0;
+			background: linear-gradient(to top right, #64b5f6 0%, #e3f2fd 100%);
+			padding: 12px;
 			font-weight: bold;
 			font-size: 1.15em;
 			display: none;
 			text-align: center;
 			cursor: pointer;
-			mask:
-				radial-gradient(50% 50%, #0000 66%, #000 67%) round
-				var(--r) var(--r)/calc(2*var(--r)) calc(2*var(--r)),
-				conic-gradient(#000 0 0) content-box;
-			-webkit-mask:
-				radial-gradient(50% 50%, #0000 66%, #000 67%) round
-				var(--r) var(--r)/calc(2*var(--r)) calc(2*var(--r)),
-				conic-gradient(#000 0 0) content-box;
+			border-radius: 12px;
 		}
 
 		.auto-detected p {
@@ -104,6 +95,18 @@
 			background-color: #fff;
 			border: 1px solid #ccc;
 			font-size: 1.1em;
+		}
+
+		.section:first-of-type {
+			margin-top: 3px;
+			padding-top: 4px;
+			padding-bottom: 6px;
+		}
+
+		.big-letter {
+			font-size: 1.25em;
+			font-variant: normal;
+			line-height: 0;
 		}
 
 		.section:last-of-type {
@@ -259,7 +262,7 @@
 			}
 
 			.toc, .section {
-				background-color: #242424;
+				background-color: #1f1f22;
 				border: none;
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 			}
@@ -268,13 +271,17 @@
 				background: linear-gradient(to top right, #1a1a3a 0%, #47496b 100%);
 				text-shadow: 0px 1px 1px rgb(0, 0, 0);
 			}
-			
-			a {
-				color: #9ae7ff;
+
+			.pwa-icon {
+				filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
 			}
-			
+
+			a {
+				color: #80d4ff;
+			}
+
 			a:visited {
-				color: #66b3ff;
+				color: #80d4ff;
 			}
 			
 			/* code {
@@ -343,18 +350,27 @@
 				border-right: none;
 			}
 
+			.section:first-of-type {
+				margin-top: 0px;
+				padding-top: .1px;
+				padding-bottom: 6px;
+			}
+
+			.pwa-icon {
+				margin-right: 5px !important;
+			}
+
 			.auto-detected {
 				margin: 20px 0;
-				padding: 15px 10px;
+				padding: 12px 16px;
 				border: none;
-				mask: none;
-				-webkit-mask: none;
+				border-radius: 0;
 			}
 		}
 	</style>
 </head>
 <body>
-	<h1>PWA Installation Guide</h1>
+	<!-- <h1>PWA Installation Guide</h1> -->
 	
 	<!-- <div class="toc">
 		<h3>Table of Contents</h3>
@@ -373,7 +389,8 @@
 	</div> -->
 
 	<div id="about-pwas" class="section">
-		<p><b>Progressive Web Apps</b> (PWAs) are websites that can be installed like native apps, but without reliance on or approval from centralized app stores.</p>
+		<span class="pwa-icon" style="float: right; margin: 15px; margin-top: 40px; font-size: 70px; line-height: 1; cursor: default; user-select: none;">📲</span>
+		<p><b><span class="big-letter">P</span>rogressive <span class="big-letter">W</span>eb <span class="big-letter">A</span>pps</b> (PWAs) are websites that can be installed like native apps, but without reliance on or approval from centralized app stores.</p>
 
 		<p>You can use the browser-specific instructions below to install PWAs directly from supported websites.
 		<!-- Once installed, they work just like regular "app store" apps. -->
