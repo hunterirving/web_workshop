@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📲</text></svg>">
+	<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
 	<title>PWA Installation Guide</title>
 	<style>
 		html {
@@ -11,7 +11,7 @@
 		}
 		
 		body {
-			font-family: serif;
+			font-family: sans-serif;
 			max-width: 800px;
 			margin: 0 auto;
 			padding: 20px;
@@ -66,13 +66,27 @@
 		}
 		
 		.auto-detected {
-			background-color: #ffffcc;
-			border: 1px dashed #333;
-			padding: 10px;
+			--r: 8px; /* control the stamp radius */
+			background: linear-gradient(to top right, #2a2a5a 0%, #ffffcc 100%);
+			padding: var(--r);
 			margin: 20px 0;
 			font-weight: bold;
 			font-size: 1.15em;
 			display: none;
+			text-align: center;
+			cursor: pointer;
+			mask:
+				radial-gradient(50% 50%, #0000 66%, #000 67%) round
+				var(--r) var(--r)/calc(2*var(--r)) calc(2*var(--r)),
+				conic-gradient(#000 0 0) content-box;
+			-webkit-mask:
+				radial-gradient(50% 50%, #0000 66%, #000 67%) round
+				var(--r) var(--r)/calc(2*var(--r)) calc(2*var(--r)),
+				conic-gradient(#000 0 0) content-box;
+		}
+
+		.auto-detected p {
+			padding: 10px;
 		}
 
 		.lightbulb {
@@ -90,6 +104,11 @@
 			background-color: #fff;
 			border: 1px solid #ccc;
 			font-size: 1.1em;
+		}
+
+		.section:last-of-type {
+			margin-bottom: 0;
+			padding-bottom: 10px;
 		}
 		
 		ol {
@@ -110,7 +129,111 @@
 			font-family: "Courier New", monospace;
 			border: 1px solid #ddd;
 		}
-		
+
+		.arrow {
+			display: inline-block;
+			width: 16px;
+			height: 10px;
+			position: relative;
+			margin: 0 6px;
+			vertical-align: middle;
+		}
+
+		.arrow::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 0;
+			width: 7.5px;
+			height: 2px;
+			background-color: #333;
+			transform: translateY(-50%);
+		}
+
+		.arrow::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 7.5px;
+			width: 0;
+			height: 0;
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 6px solid #333;
+			transform: translateY(-50%);
+		}
+
+		.ui-element {
+			background-color: #f0f0f0;
+			padding: 2px 6px;
+			border-radius: 4px;
+			border: 1px solid #ddd;
+			font-size: 1em;
+		}
+
+		.dots {
+			display: inline-flex;
+			align-items: center;
+			gap: 3px;
+			height: 1em;
+			vertical-align: middle;
+		}
+
+		.dots::before,
+		.dots::after,
+		.dots span::before {
+			content: '';
+			display: inline-block;
+			width: 3.5px;
+			height: 3.5px;
+			background-color: #333;
+			border-radius: 50%;
+		}
+
+		.dots span {
+			display: inline-flex;
+		}
+
+		.dots span::before {
+			content: '';
+		}
+
+		.vdots {
+			display: inline-flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 3px;
+			vertical-align: middle;
+			justify-content: center;
+			min-height: 1.8em;
+			box-sizing: content-box;
+			padding: 2px 0;
+		}
+
+		.vdots::before,
+		.vdots::after,
+		.vdots span::before {
+			content: '';
+			display: block;
+			width: 3.5px;
+			height: 3.5px;
+			background-color: #333;
+			border-radius: 50%;
+		}
+
+		.vdots span {
+			display: flex;
+		}
+
+		.vdots span::before {
+			content: '';
+		}
+
+		.ui-element:has(.vdots:only-child) {
+			padding-top: 6px;
+			padding-bottom: 6px;
+		}
+
 		.note {
 			font-style: italic;
 			color: #666;
@@ -138,29 +261,54 @@
 			.toc, .section {
 				background-color: #242424;
 				border: none;
-				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 			}
 
 			.auto-detected {
-				background-color: #2d4a2d;
-				border: none;
-				text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.35);
+				background: linear-gradient(to top right, #1a1a3a 0%, #47496b 100%);
+				text-shadow: 0px 1px 1px rgb(0, 0, 0);
 			}
 			
 			a {
-				color: #66b3ff;
+				color: #9ae7ff;
 			}
 			
 			a:visited {
 				color: #66b3ff;
 			}
 			
-			code {
+			/* code {
+				background-color: #3d3d3d;
+				border-color: #555;
+				color: #e0e0e0;
+			} */
+
+			.ui-element {
 				background-color: #3d3d3d;
 				border-color: #555;
 				color: #e0e0e0;
 			}
-			
+
+			.arrow::before {
+				background-color: #fff;
+			}
+
+			.arrow::after {
+				border-left-color: #fff;
+			}
+
+			.dots::before,
+			.dots::after,
+			.dots span::before {
+				background-color: #e0e0e0;
+			}
+
+			.vdots::before,
+			.vdots::after,
+			.vdots span::before {
+				background-color: #e0e0e0;
+			}
+
 			.note {
 				color: #aaa;
 				border-left-color: #666;
@@ -188,11 +336,19 @@
 				display: none;
 			}
 			
-			.section, .toc, .auto-detected {
+			.section, .toc {
 				margin: 20px 0;
 				padding: 15px 10px;
 				border-left: none;
 				border-right: none;
+			}
+
+			.auto-detected {
+				margin: 20px 0;
+				padding: 15px 10px;
+				border: none;
+				mask: none;
+				-webkit-mask: none;
 			}
 		}
 	</style>
@@ -217,16 +373,12 @@
 	</div> -->
 
 	<div id="about-pwas" class="section">
-		<h2>About Progressive Web Apps</h2>
-		
-		<!-- <h3>What are PWAs?</h3> -->
-		<p>Progressive Web Apps (PWAs) are websites that can be installed like native apps, but without reliance on or approval from centralized app stores.</p>
-		
-		
+		<p><b>Progressive Web Apps</b> (PWAs) are websites that can be installed like native apps, but without reliance on or approval from centralized app stores.</p>
 
-		<p>Use the browser-specific instructions below to install PWAs directly from supported websites. Once installed, they'll work just like regular "app store" apps.</p>
+		<p>You can use the browser-specific instructions below to install PWAs directly from supported websites.
+		<!-- Once installed, they work just like regular "app store" apps. -->
+		</p>
 
-		
 		<!-- <p>To explore the full range of PWA capabilities, visit <a href="https://whatpwacando.today/" target="_blank" rel="noopener">What PWA Can Do Today</a>.</p> -->
 
 		<!-- <h3>Creating PWAs</h3>
@@ -245,25 +397,25 @@
 	<div id="safari-ios" class="section">
 		<h2>Safari (iOS / iPadOS)</h2>
 		<p>Navigate to a website that supports PWA installation, then tap:</p>
-		<p><code>···</code> → Share → More → Add to Home Screen → Add</p>
-		<p class="note">Note: on iOS, all browsers use Safari's rendering engine. You can install PWAs using other browsers, but the effect will be the same as if they were installed from Safari.</p>
+		<p><span class="ui-element"><span class="dots"><span></span></span></span> <span class="arrow"></span> Share <span class="arrow"></span> More <span class="arrow"></span> Add to Home Screen <span class="arrow"></span> Add</p>
+		<p class="note">Note: on iOS, Safari is the <a href="https://open-web-advocacy.org/walled-gardens-report/#ios-web-app-installation---a-well-hidden-safari-exclusive">only browser</a> that can install PWAs.</p>
 	</div>
 
 	<div id="chrome-android" class="section">
 		<h2>Chrome (Android)</h2>
 		<p>Navigate to a website that supports PWA installation, then tap:</p>
-		<p><code>⋮</code> → Add to Home screen → Install.</p>
+		<p><span class="ui-element"><span class="vdots"><span></span></span></span> <span class="arrow"></span> Add to Home screen <span class="arrow"></span> Install.</p>
 	</div>
 
 	<div id="firefox-android" class="section">
 		<h2>Firefox (Android)</h2>
 		<p>Navigate to a website that supports PWA installation, then tap:</p>
-		<p><code>⋮</code> → <code>··· More</code> → Add to Home screen → Add to Home screen.</p>
+		<p><span class="ui-element"><span class="vdots"><span></span></span></span> <span class="arrow"></span> <span class="ui-element"><span class="dots"><span></span></span> <span style="position: relative; top: 1px;">More</span></span> <span class="arrow"></span> Add to Home screen <span class="arrow"></span> Add to Home screen.</p>
 	</div>
 
 	<div id="safari-mac" class="section">
 		<h2>Safari (macOS)</h2>
-		<p>Navigate to a website that supports PWA installation, then click File → Add to Dock.</p>
+		<p>Navigate to a website that supports PWA installation, then click File <span class="arrow"></span> Add to Dock.</p>
 		<p>The app will appear in your Dock and Applications folder, and will open in its own window without browser UI.</p>
 		<!-- <p class="note">Note: Requires macOS Sonoma 14+. Older versions may not support this feature.</p> -->
 	</div>
@@ -271,20 +423,20 @@
 	<div id="edge-windows" class="section">
 		<h2>Microsoft Edge (Windows)</h2>
 		<p>Navigate to a website that supports PWA installation, then click:</p>
-		<p><code>···</code> → Apps → Install this site as an app.</p>
+		<p><span class="ui-element"><span class="dots"><span></span></span></span> <span class="arrow"></span> Apps <span class="arrow"></span> Install this site as an app.</p>
 		<p>The app will appear in the Start menu.</p>
 	</div>
 
 	<div id="chrome-desktop" class="section">
 		<h2>Chrome (Desktop)</h2>
 		<p>Navigate to a website that supports PWA installation, click the install icon (downward pointing arrow) in the address bar, then click Install.</p>
-		<!-- <p class="note">Alternatively: <code>⋮</code> → Cast, save, and share → Install page as app</p> -->
+		<!-- <p class="note">Alternatively: <code>⋮</code> ➛ Cast, save, and share ➛ Install page as app</p> -->
 		<p>The app will appear in your applications folder or Start menu.</p>
 	</div>
 
 	<div id="firefox-desktop" class="section">
 		<h2>Firefox (Desktop)</h2>
-		<p><strong>⚠️ The desktop version of Firefox lacks PWA support.</strong><br>Use <a href="#chrome-desktop">Chrome</a>, <a href="#safari-mac">Safari</a>, or <a href="#edge-windows">Edge</a> instead.</p>
+		<p><strong>⚠️ The desktop version of Firefox lacks PWA support.</strong><br>Try <a href="#chrome-desktop">Chrome</a>, <a href="#safari-mac">Safari</a>, or <a href="#edge-windows">Edge</a> instead.</p>
 		<p>In 2020, Mozilla stated that <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682593#c8">"there is currently no plan for PWA support in Firefox"</a>.<br>
 		While Firefox Beta 141+ has introduced <a href="https://www.omgubuntu.co.uk/2025/03/firefox-nightly-supports-web-apps-taskbar-tabs">some web app functionality</a>, it remains incomplete.</p>
 	</div>
@@ -324,8 +476,11 @@
 		<h3><a href="https://hunterirving.com">HunterIrving.com</a></h3>
 		<p class="note">Experience Huntergram, Gobbler, and more in the dedicated hunterirving.com PWA.</p>
 
-		<h3><a href="https://hacksburg.org">Hacksburg.org</a></h3>
-		<p class="note">Stay up to date with goings on at Hacksburg, a makerspace in Blacksburg, VA.</p>
+		<h3><a href="https://hunterirving.github.io/qr/">QR</a></h3>
+		<p class="note">A no-nonsense QR code generator.</p>
+
+		<!-- <h3><a href="https://hacksburg.org">Hacksburg.org</a></h3>
+		<p class="note">Stay up to date with goings on at Hacksburg, a makerspace in Blacksburg, VA.</p> -->
 
 		<h3><a href="https://hunterirving.github.io/klaxon/" target="_blank">Klaxon</a></h3>
 		<p class="note">A chess clock in your pocket, optimized for touchscreen devices and competitive play.</p>		
@@ -336,8 +491,8 @@
 		<h3><a href="https://hunterirving.github.io/pop_viz/">Pop Viz</a></h3>
 		<p class="note">What does 100,000 people look like? Don't ask me — install this Progressive Web App.</p>
 
-		<h3><a href="https://hunterirving.github.io/web_workshop/pages/snake/">SNAKE</a></h3>
-		<p class="note">The classic game, reimagined for the modern era.</p>
+		<!-- <h3><a href="https://hunterirving.github.io/web_workshop/pages/snake/">SNAKE</a></h3>
+		<p class="note">The classic game, reimagined for the modern era.</p> -->
 	</div>
 
 	<script>
@@ -393,10 +548,13 @@
 			if (targetSection) {
 				const autoDetectedDiv = document.getElementById('auto-detected');
 				const detectedLink = document.getElementById('detected-link');
-				
+
 				detectedLink.innerHTML = `<a href="#${targetSection}">${detectedBrowser} on ${detectedOS}</a>`;
 				autoDetectedDiv.style.display = 'block';
-				
+
+				autoDetectedDiv.addEventListener('click', function() {
+					window.location.hash = targetSection;
+				});
 			}
 		}
 		
