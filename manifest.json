@@ -1,7 +1,7 @@
 {
-  "name": "Web Workshop",
-  "short_name": "WW",
-  "description": "HTML editor and live preview tool",
+  "name": "web workshop",
+  "short_name": "web workshop",
+  "description": "craft handmade websites in their natural habitat",
   "start_url": "/web_workshop/",
   "display": "standalone",
   "background_color": "#16181b",
