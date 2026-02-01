@@ -80,6 +80,10 @@
 			padding: 10px;
 		}
 
+		.auto-detected #detected-link span {
+			color: #0000EE;
+		}
+
 		.lightbulb {
 			text-shadow: 0px 0px 1px black;
 			font-size: 1.4em;
@@ -101,6 +105,29 @@
 			margin-top: 3px;
 			padding-top: 4px;
 			padding-bottom: 6px;
+		}
+
+		#pwa-emoji {
+			float: right;
+			margin: 15px;
+			margin-top: 40px;
+			font-size: 70px;
+			line-height: 1;
+			cursor: default;
+			user-select: none;
+		}
+
+		#pwa-infrared {
+			display: none;
+			float: right;
+			margin: 10px;
+			margin-top: 15px;
+			margin-right: 7px;
+			padding-left: 10px;
+			width: 100px;
+			image-rendering: pixelated;
+			cursor: default;
+			user-select: none;
 		}
 
 		.big-letter {
@@ -248,6 +275,10 @@
 		.note code {
 			font-style: normal;
 		}
+
+		.walkthrough-image {
+			width: 100%;
+		}
 		
 		/* Dark mode styles */
 		@media (prefers-color-scheme: dark) {
@@ -283,12 +314,10 @@
 			a:visited {
 				color: #80d4ff;
 			}
-			
-			/* code {
-				background-color: #3d3d3d;
-				border-color: #555;
-				color: #e0e0e0;
-			} */
+
+			.auto-detected #detected-link span {
+				color: #80d4ff;
+			}
 
 			.ui-element {
 				background-color: #3d3d3d;
@@ -356,55 +385,22 @@
 				padding-bottom: 6px;
 			}
 
-			.pwa-icon {
-				margin-right: 5px !important;
-			}
-
 			.auto-detected {
 				margin: 20px 0;
 				padding: 12px 16px;
 				border: none;
 				border-radius: 0;
 			}
-		}
+	}
 	</style>
 </head>
 <body>
-	<!-- <h1>PWA Installation Guide</h1> -->
-	
-	<!-- <div class="toc">
-		<h3>Table of Contents</h3>
-		<ul>
-			<li><a href="#about-pwas">About PWAs</a></li>
-			<li><a href="#chrome-desktop">Chrome (Desktop)</a></li>
-			<li><a href="#firefox-desktop">Firefox (Desktop)</a></li>
-			<li><a href="#safari-mac">Safari (macOS)</a></li>
-			<li><a href="#edge-windows">Microsoft Edge (Windows)</a></li>
-			<li><a href="#chrome-android">Chrome (Android)</a></li>
-			<li><a href="#firefox-android">Firefox (Android)</a></li>
-			<li><a href="#safari-ios">Safari (iOS/iPadOS)</a></li>
-			<li><a href="#troubleshooting">Troubleshooting</a></li>
-			<li><a href="#try-these-pwas">Progressive Web Apps You Can Install Right Now</a></li>
-		</ul>
-	</div> -->
-
 	<div id="about-pwas" class="section">
-		<span class="pwa-icon" style="float: right; margin: 15px; margin-top: 40px; font-size: 70px; line-height: 1; cursor: default; user-select: none;">📲</span>
-		<p><b><span class="big-letter">P</span>rogressive <span class="big-letter">W</span>eb <span class="big-letter">A</span>pps</b> (PWAs) are websites that can be installed like native apps, but without reliance on or approval from centralized app stores.</p>
+		<span id="pwa-emoji" class="pwa-icon">📲</span>
+		<img id="pwa-infrared" src="infrared.png" alt="">
+		<p><b><span class="big-letter">P</span>rogressive <span class="big-letter">W</span>eb <span class="big-letter">A</span>pps</b> (PWAs) are apps that can be installed directly from supported websites, independent of centralized app stores.</p>
 
-		<p>You can use the browser-specific instructions below to install PWAs directly from supported websites.
-		<!-- Once installed, they work just like regular "app store" apps. -->
-		</p>
-
-		<!-- <p>To explore the full range of PWA capabilities, visit <a href="https://whatpwacando.today/" target="_blank" rel="noopener">What PWA Can Do Today</a>.</p> -->
-
-		<!-- <h3>Creating PWAs</h3>
-		<p>To make your web application installable as a PWA, it must have the following:</p>
-		<ul>
-			<li><strong>Web App Manifest:</strong> A JSON file that defines app metadata, icons, and display preferences</li>
-			<li><strong>Service Worker:</strong> JavaScript that runs in the background to enable offline functionality and caching</li>
-			<li><strong>HTTPS:</strong> Secure connection required for service worker registration</li>
-		</ul> -->
+		<p>You can use the instructions below to install PWAs directly from your web browser.</p>
 	</div>
 
 	<div id="auto-detected" class="auto-detected">
@@ -413,9 +409,22 @@
 
 	<div id="safari-ios" class="section">
 		<h2>Safari (iOS / iPadOS)</h2>
-		<p>Navigate to a website that supports PWA installation, then tap:</p>
-		<p><span class="ui-element"><span class="dots"><span></span></span></span> <span class="arrow"></span> Share <span class="arrow"></span> More <span class="arrow"></span> Add to Home Screen <span class="arrow"></span> Add</p>
-		<p class="note">Note: on iOS, Safari is the <a href="https://open-web-advocacy.org/walled-gardens-report/#ios-web-app-installation---a-well-hidden-safari-exclusive">only browser</a> that can install PWAs.</p>
+		<p class="note">Note: on iOS, Safari is the only browser that can install PWAs.</p>
+		<p>Open Safari and navigate to a website that supports PWA installation, then tap:</p>
+		<p>1. The three dots button in the bottom right corner of the screen:</p>
+		<img src="ios_safari/dots.jpeg" class="walkthrough-image">
+		<p>2. Share:</p>
+		<img src="ios_safari/share.jpeg" class="walkthrough-image">
+		<p>3. View More:</p>
+		<img src="ios_safari/view_more.jpeg" class="walkthrough-image">
+		<p>4. Scroll down to reveal the hidden "Add to Home Screen" button:</p>
+		<video src="ios_safari/scroll_down.mov" autoplay muted loop playsinline class="walkthrough-image"></video>
+		<p>5. Tap the "Add to Home Screen" button:</p>
+		<img src="ios_safari/add_to_home_screen.jpeg" class="walkthrough-image">
+		<p>6. Tap "Add":</p>
+		<img src="ios_safari/add.jpeg" class="walkthrough-image">
+		<p>The app will be installed directly to your home screen.</p>
+
 	</div>
 
 	<div id="chrome-android" class="section">
@@ -457,32 +466,6 @@
 		<p>In 2020, Mozilla stated that <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682593#c8">"there is currently no plan for PWA support in Firefox"</a>.<br>
 		While Firefox Beta 141+ has introduced <a href="https://www.omgubuntu.co.uk/2025/03/firefox-nightly-supports-web-apps-taskbar-tabs">some web app functionality</a>, it remains incomplete.</p>
 	</div>
-
-	<!-- <div id="troubleshooting" class="section">
-		<h2>Troubleshooting</h2>
-		<h3>Install Option Not Available?</h3>
-		<ul>
-			<li>Ensure the website is served over HTTPS</li>
-			<li>Check that the website meets <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable#installability">the requirements</a> for PWA installation</li>
-			<li>Try refreshing the page or clearing browser cache</li>
-		</ul>
-		
-		<h3>PWA Not Working Properly?</h3>
-		<ul>
-			<li>Check your Internet connection</li>
-			<li>Clear the app's cache or data</li>
-			<li>Uninstall and reinstall the PWA</li>
-			<li>Update your browser to the latest version</li>
-		</ul>
-		
-		<h3>Can't Find Installed PWA?</h3>
-		<ul>
-			<li><strong>Windows:</strong> Check Start menu, Desktop, or Apps list</li>
-			<li><strong>Mac:</strong> Check Applications folder or Launchpad</li>
-			<li><strong>Android:</strong> Check home screen, app drawer, or search</li>
-			<li><strong>iOS:</strong> Check home screen</li>
-		</ul>
-	</div> -->
 
 	<div id="try-these-pwas" class="section">
 		<h2>Progressive Web Apps You Can Install Right Now</h2>
@@ -562,15 +545,21 @@
 				}
 			}
 			
-			if (targetSection) {
+			const isPhone = (detectedOS === 'Android' || detectedOS === 'iOS');
+		if (!isPhone) {
+			document.getElementById('pwa-emoji').style.display = 'none';
+			document.getElementById('pwa-infrared').style.display = 'block';
+		}
+
+		if (targetSection) {
 				const autoDetectedDiv = document.getElementById('auto-detected');
 				const detectedLink = document.getElementById('detected-link');
 
-				detectedLink.innerHTML = `<a href="#${targetSection}">${detectedBrowser} on ${detectedOS}</a>`;
+				detectedLink.innerHTML = `<span style="text-decoration: underline;">${detectedBrowser} on ${detectedOS}</span>`;
 				autoDetectedDiv.style.display = 'block';
 
 				autoDetectedDiv.addEventListener('click', function() {
-					window.location.hash = targetSection;
+					document.getElementById(targetSection).scrollIntoView({ behavior: 'smooth' });
 				});
 			}
 		}
