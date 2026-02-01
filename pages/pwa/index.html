@@ -37,7 +37,7 @@
 			padding-bottom: 5px;
 			margin-top: 0;
 		}
-		
+
 		.toc {
 			border: 1px solid #ccc;
 			padding: 15px;
@@ -65,7 +65,8 @@
 			color: #0000EE;
 		}
 		
-		.auto-detected {
+		a.auto-detected,
+		a.auto-detected:visited {
 			background: linear-gradient(to top right, #64b5f6 0%, #e3f2fd 100%);
 			padding: 12px;
 			font-weight: bold;
@@ -74,14 +75,17 @@
 			text-align: center;
 			cursor: pointer;
 			border-radius: 12px;
+			text-decoration: none;
+			color: #ffffff;
 		}
 
 		.auto-detected p {
 			padding: 10px;
 		}
 
-		.auto-detected #detected-link span {
+		.auto-detected #detected-link {
 			color: #0000EE;
+			text-decoration: underline;
 		}
 
 		.lightbulb {
@@ -89,6 +93,7 @@
 			font-size: 1.4em;
 			vertical-align: middle;
 			line-height: 1;
+			user-select: none;
 		}
 
 		
@@ -108,6 +113,7 @@
 		}
 
 		#pwa-emoji {
+			display: none;
 			float: right;
 			margin: 15px;
 			margin-top: 40px;
@@ -298,9 +304,11 @@
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 			}
 
-			.auto-detected {
+			a.auto-detected,
+			a.auto-detected:visited {
 				background: linear-gradient(to top right, #1a1a3a 0%, #47496b 100%);
 				text-shadow: 0px 1px 1px rgb(0, 0, 0);
+				color: #ffffff;
 			}
 
 			.pwa-icon {
@@ -315,7 +323,7 @@
 				color: #80d4ff;
 			}
 
-			.auto-detected #detected-link span {
+			.auto-detected #detected-link {
 				color: #80d4ff;
 			}
 
@@ -403,9 +411,9 @@
 		<p>You can use the instructions below to install PWAs directly from your web browser.</p>
 	</div>
 
-	<div id="auto-detected" class="auto-detected">
+	<a id="auto-detected" class="auto-detected" href="#">
 		<p><span class="lightbulb">💡</span> Based on your system, you might want to jump directly to: <span id="detected-link"></span></p>
-	</div>
+	</a>
 
 	<div id="safari-ios" class="section">
 		<h2>Safari (iOS / iPadOS)</h2>
@@ -546,8 +554,9 @@
 			}
 			
 			const isPhone = (detectedOS === 'Android' || detectedOS === 'iOS');
-		if (!isPhone) {
-			document.getElementById('pwa-emoji').style.display = 'none';
+		if (isPhone) {
+			document.getElementById('pwa-emoji').style.display = 'inline';
+		} else {
 			document.getElementById('pwa-infrared').style.display = 'block';
 		}
 
@@ -555,12 +564,9 @@
 				const autoDetectedDiv = document.getElementById('auto-detected');
 				const detectedLink = document.getElementById('detected-link');
 
-				detectedLink.innerHTML = `<span style="text-decoration: underline;">${detectedBrowser} on ${detectedOS}</span>`;
+				autoDetectedDiv.href = `#${targetSection}`;
+				detectedLink.textContent = `${detectedBrowser} on ${detectedOS}`;
 				autoDetectedDiv.style.display = 'block';
-
-				autoDetectedDiv.addEventListener('click', function() {
-					document.getElementById(targetSection).scrollIntoView({ behavior: 'smooth' });
-				});
 			}
 		}
 		
