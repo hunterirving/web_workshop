@@ -468,11 +468,17 @@
 		<p>The app will appear in your applications folder or Start menu.</p>
 	</div>
 
+	<div id="firefox-windows" class="section">
+		<h2>Firefox (Windows)</h2>
+		<p class="note">Note: Requires Firefox 143 or later. Not available if Firefox was installed from the Microsoft Store.</p>
+		<p>Navigate to a website that supports PWA installation, then click the <a href="https://support.mozilla.org/en-US/kb/web-apps-firefox-windows#w_install-web-apps" target="_blank">install button</a> in the address bar.</p>
+		<p>The app will appear in your taskbar and Start menu, and will open in its own window.</p>
+	</div>
+
 	<div id="firefox-desktop" class="section">
-		<h2>Firefox (Desktop)</h2>
-		<p><strong>⚠️ The desktop version of Firefox lacks PWA support.</strong><br>Try <a href="#chrome-desktop">Chrome</a>, <a href="#safari-mac">Safari</a>, or <a href="#edge-windows">Edge</a> instead.</p>
-		<p>In 2020, Mozilla stated that <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1682593#c8">"there is currently no plan for PWA support in Firefox"</a>.<br>
-		While Firefox Beta 141+ has introduced <a href="https://www.omgubuntu.co.uk/2025/03/firefox-nightly-supports-web-apps-taskbar-tabs">some web app functionality</a>, it remains incomplete.</p>
+		<h2>Firefox (macOS / Linux)</h2>
+		<p><strong>⚠️ The macOS and Linux versions of Firefox do not support web app installation.</strong><br>Try <a href="#chrome-desktop">Chrome</a> or <a href="#safari-mac">Safari</a> instead.</p>
+		<p>Firefox for Windows added web app support in <a href="https://support.mozilla.org/en-US/kb/web-apps-firefox-windows" target="_blank">version 143</a> (September 2025), but support for macOS and Linux has not yet been announced.</p>
 	</div>
 
 	<div id="try-these-pwas" class="section">
@@ -535,6 +541,8 @@
 				detectedBrowser = 'Firefox';
 				if (detectedOS === 'Android') {
 					targetSection = 'firefox-android';
+				} else if (detectedOS === 'Windows') {
+					targetSection = 'firefox-windows';
 				} else {
 					targetSection = 'firefox-desktop';
 				}
