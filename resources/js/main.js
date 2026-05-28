@@ -505,6 +505,20 @@ function initializeCodeMirror() {
 	// Focus the editor
 	editorView.focus();
 
+	// block touchmove in mobile keyboard mode unless inside a scrollable element (ios rubber-band fix)
+	document.addEventListener('touchmove', (e) => {
+		if (!document.body.classList.contains('mobile-keyboard-open')) return;
+		let node = e.target;
+		while (node && node !== document.body) {
+			if (node.scrollHeight > node.clientHeight) {
+				const style = getComputedStyle(node);
+				if (style.overflowY === 'auto' || style.overflowY === 'scroll') return;
+			}
+			node = node.parentElement;
+		}
+		e.preventDefault();
+	}, { passive: false });
+
 	// Global keydown handler for Cmd+F toggle
 	document.addEventListener('keydown', function(e) {
 		if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
