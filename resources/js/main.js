@@ -3,15 +3,18 @@ let editorView;
 const preview = document.getElementById('preview');
 
 // Stock images loaded from manifest - can be referenced by bare filename
-let stockImages = new Map(); // lowercase -> original filename
+let stockImages = new Map(); // lowercase filename -> path relative to images/
 
 // Load stock image list from manifest
 const stockImagesReady = fetch('resources/resource-manifest.json')
 	.then(r => r.json())
 	.then(manifest => {
 		manifest.images.forEach(path => {
-			const filename = path.split('/').pop();
-			stockImages.set(filename.toLowerCase(), filename);
+			const marker = '/resources/images/';
+			const i = path.indexOf(marker);
+			const rel = i === -1 ? path.split('/').pop() : path.slice(i + marker.length);
+			const filename = rel.split('/').pop();
+			stockImages.set(filename.toLowerCase(), rel);
 		});
 	})
 	.catch(() => console.log('Could not load resource manifest'));
@@ -21,38 +24,88 @@ function rewriteBareImageSrcs(html) {
 	// Rewrite <img src="filename.ext">
 	html = html.replace(/(<img\s[^>]*\bsrc\s*=\s*["'])([^"'/:]+\.(gif|png|jpg|jpeg|svg|webp))(["'])/gi,
 		(match, before, filename, ext, after) => {
-			const original = stockImages.get(filename.toLowerCase());
-			if (original) {
-				return before + 'resources/images/' + original + after;
+			const rel = stockImages.get(filename.toLowerCase());
+			if (rel) {
+				return before + 'resources/images/' + rel + after;
 			}
 			return match;
 		});
 	// Rewrite url(filename.ext) in CSS
 	html = html.replace(/(url\(\s*["']?)([^"')/:]+\.(gif|png|jpg|jpeg|svg|webp))(["']?\s*\))/gi,
 		(match, before, filename, ext, after) => {
-			const original = stockImages.get(filename.toLowerCase());
-			if (original) {
-				return before + 'resources/images/' + original + after;
+			const rel = stockImages.get(filename.toLowerCase());
+			if (rel) {
+				return before + 'resources/images/' + rel + after;
 			}
 			return match;
 		});
 	return html;
 }
 
-// Expand <img src="?"> tags into gallery table
+const galleryStyle = `<style>
+.stock-image-gallery { -webkit-tap-highlight-color: transparent; }
+.stock-image-gallery details { padding-top: 5px; padding-bottom: 5px; background: #fff; }
+.stock-image-gallery summary { cursor: pointer; user-select: none; padding: 0px 0 10px 10px; font-weight: 600; font-size: 1.9rem; list-style: none; background: #fff; }
+.stock-image-gallery summary::-webkit-details-marker { display: none; }
+.stock-image-gallery summary::before { content: ""; display: inline-block; width: 0.5em; height: 0.5em; margin-right: 0.45em; vertical-align: 0.09em; background: currentColor; clip-path: polygon(0 0, 100% 50%, 0 100%); transform: translateX(0.08em); }
+.stock-image-gallery details[open] > summary::before { clip-path: polygon(0 0, 100% 0, 50% 100%); transform: translateY(0.08em); }
+.stock-image-gallery table, .stock-image-gallery td { border: none; }
+.stock-image-gallery td { text-align: center; vertical-align: middle; font-size: 1.4rem; overflow-wrap: break-word; }
+.stock-image-gallery tr:nth-child(odd) { background: #e1e7fcff; }
+.stock-image-gallery tr:nth-child(even) { background: #fff; }
+.stock-image-gallery img { display: block; margin: 0 auto; image-rendering: pixelated; }
+.stock-image-gallery summary span, .stock-image-gallery .stock-image-name { color: #000; }
+</style>`;
+
+// Preview chrome (overscroll reset + fullscreen toggle), injected into the srcdoc so it
+// renders immediately at parse time instead of waiting for the iframe's load event (which
+// blocks on all gallery images finishing). Inline onclick avoids needing a post-load listener.
+const previewChrome = '<style>* { overscroll-behavior: none !important; } .iframe-fullscreen-toggle { position: fixed; top: 5px; right: 5px; z-index: 10000; background: rgba(0, 0, 0, 0.2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: white; border: none; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); -webkit-tap-highlight-color: transparent; outline: none; user-select: none; } .iframe-fullscreen-toggle svg { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3)); opacity: 0.8; transition: opacity 0.2s; } @media (hover: hover) and (pointer: fine) { .iframe-fullscreen-toggle:hover { background: rgba(0, 0, 0, 0.35); } .iframe-fullscreen-toggle:hover svg { opacity: 1; } }</style><button id="fullscreenToggle" class="iframe-fullscreen-toggle" title="Toggle fullscreen" onclick="parent.postMessage(\'toggleFullscreen\', \'*\')"><svg width="20" height="20" viewBox="0 0 14 14" fill="white"><path d="M 7,14 H 5 v 5 h 5 V 17 H 7 Z M 5,10 H 7 V 7 h 3 V 5 H 5 Z m 12,7 h -3 v 2 h 5 V 14 H 17 Z M 14,5 v 2 h 3 v 3 h 2 V 5 Z" transform="translate(-5,-5)"/></svg></button>';
+
+// Order categories alphabetically, with Other last
+function compareCategories(a, b) {
+	if (a === 'Other') return 1;
+	if (b === 'Other') return -1;
+	return a.localeCompare(b);
+}
+
+// Natural sort so "2 Ivysaur" comes before "10 Caterpie"
+function compareNatural(a, b) {
+	return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
+}
+
+// Expand <img src="?"> tags into a categorized gallery of stock images
 function expandImagesTag(html) {
 	return html.replace(/<img\s+src\s*=\s*["']?\?["']?\s*\/?>/gi, () => {
-		const images = Array.from(stockImages.values()).sort();
-		if (images.length === 0) return '<p>No images available</p>';
-		const rows = images.map(filename =>
-			`<tr class="stock-image-row" data-filename="${filename}" style="cursor:pointer;user-select:none;"><td>${filename}</td><td style="text-align:center;"><img src="resources/images/${filename}" style="max-width:100%;height:auto;pointer-events:none;"></td></tr>`
-		).join('');
-		return `<table class="stock-image-table" border="1" cellpadding="8" cellspacing="0" style="max-width:100%;box-sizing:border-box;table-layout:fixed;"><colgroup><col style="width:50%"><col style="width:50%"></colgroup>${rows}</table>`;
+		if (stockImages.size === 0) return '<p>No images available</p>';
+
+		// Group relative paths by their top-level category folder
+		const categories = new Map();
+		for (const rel of stockImages.values()) {
+			const slash = rel.indexOf('/');
+			const category = slash === -1 ? 'Other' : rel.slice(0, slash);
+			const filename = rel.split('/').pop();
+			if (!categories.has(category)) categories.set(category, []);
+			categories.get(category).push({ rel, filename });
+		}
+
+		const sections = Array.from(categories.keys()).sort(compareCategories).map(category => {
+			const items = categories.get(category).sort((a, b) => compareNatural(a.filename, b.filename));
+			const rows = items.map(({ rel, filename }) => {
+				// prefer wrapping after _ and . over breaking mid-word
+				const displayName = filename.replace(/[_.]/g, '$&<wbr>');
+				return `<tr class="stock-image-row" data-filename="${filename}" style="cursor:pointer;user-select:none;"><td><span class="stock-image-name">${displayName}</span></td><td><img src="resources/images/${rel}" style="max-width:100%;height:auto;pointer-events:none;"></td></tr>`;
+			}).join('');
+			const table = `<table class="stock-image-table" cellpadding="8" cellspacing="0" style="width:100%;max-width:100%;box-sizing:border-box;table-layout:fixed;"><colgroup><col style="width:50%"><col style="width:50%"></colgroup>${rows}</table>`;
+			return `<details><summary><span>${category}</span></summary>${table}</details>`;
+		}).join('');
+
+		return `${galleryStyle}<div class="stock-image-gallery">${sections}</div>`;
 	});
 }
 const editorPane = document.querySelector('.editor-pane');
 const previewPane = document.querySelector('.preview-pane');
-const storageKey = 'html-lab-content';
+const storageKey = 'web-workshop-content';
 let isFullscreen = false;
 let showLineNumbers = false;
 let enableLineWrapping = false;
@@ -170,38 +223,13 @@ function updatePreview() {
 	// Use srcdoc to create a completely fresh document context
 	// Expand <images> tag and rewrite bare stock image filenames
 	const processedCode = expandImagesTag(rewriteBareImageSrcs(code.trim())) || '<!DOCTYPE html><html><head></head><body></body></html>';
-	preview.srcdoc = processedCode;
+	preview.srcdoc = processedCode + previewChrome;
 
 	// Add our functionality after the iframe loads
 	const onLoad = () => {
 		try {
 			const doc = preview.contentDocument;
 			if (!doc) return;
-
-			// Add CSS for overscroll and button
-			const style = doc.createElement('style');
-			style.textContent = '* { overscroll-behavior: none !important; } .iframe-fullscreen-toggle { position: fixed; top: 5px; right: 5px; z-index: 10000; background: rgba(0, 0, 0, 0.2); color: white; border: none; border-radius: 4px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background-color 0.2s; box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2); -webkit-tap-highlight-color: transparent; outline: none; user-select: none; } .iframe-fullscreen-toggle svg { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3)); opacity: 0.8; transition: opacity 0.2s; } @media (hover: hover) and (pointer: fine) { .iframe-fullscreen-toggle:hover { background: rgba(0, 0, 0, 0.35); } .iframe-fullscreen-toggle:hover svg { opacity: 1; } }';
-			doc.head.appendChild(style);
-
-			// Create fullscreen button
-			const existingButton = doc.getElementById('fullscreenToggle');
-			if (existingButton) existingButton.remove();
-
-			const button = doc.createElement('button');
-			button.id = 'fullscreenToggle';
-			button.className = 'iframe-fullscreen-toggle';
-			button.title = 'Toggle fullscreen';
-
-			// Use inline SVG to avoid being affected by user's img styles
-			button.innerHTML = '<svg width="20" height="20" viewBox="0 0 14 14" fill="white"><path d="M 7,14 H 5 v 5 h 5 V 17 H 7 Z M 5,10 H 7 V 7 h 3 V 5 H 5 Z m 12,7 h -3 v 2 h 5 V 14 H 17 Z M 14,5 v 2 h 3 v 3 h 2 V 5 Z" transform="translate(-5,-5)"/></svg>';
-
-			button.addEventListener('click', function() {
-				parent.postMessage('toggleFullscreen', '*');
-			});
-
-			if (doc.body) {
-				doc.body.appendChild(button);
-			}
 
 			// Add click handlers for stock image table rows
 			const stockImageRows = doc.querySelectorAll('.stock-image-row');

@@ -3,7 +3,7 @@
 Craft handmade websites in their natural habitat (your web browser).
 
 <a href="https://hunterirving.github.io/web_workshop/">
-<img src="resources/images/pika_construction.gif" width="155"></a><br><br>
+<img src="resources/images/Other/pika_construction.gif" width="155"></a><br><br>
 
 Web Workshop was born as a teaching tool for web development classes, with the goal of making web publishing more accessible, especially to those who have never written code before.
 
@@ -29,7 +29,7 @@ Recently, Web Workshop has become an editor of choice for <a href="https://html.
     - Your work is automatically saved, and restored when you reload the page
 3. Press `⌘ + S` to export your work as an HTML file (`⌘ + O` to open an existing file)
 
-<img src="resources/images/hacking.gif" width="300">
+<img src="resources/images/Other/hacking.gif" width="300">
 
 ## Stock Images
 A library of stock images is included for your convenience. To browse them, type `<img src="?">` anywhere in the editor pane, then click to select an image from the resulting table.
@@ -40,7 +40,7 @@ A library of stock images is included for your convenience. To browse them, type
 
 Alternatively, if you know the name of the image you'd like to use, you can add it to your project like so: `<img src="coffee.gif">`.
 
-<img src="resources/images/coffee.gif">
+<img src="resources/images/Other/coffee.gif">
 
 ## Boilerplate
 Type `<!>` to insert the following starter HTML:
@@ -64,7 +64,7 @@ Type `<!>` to insert the following starter HTML:
 - to toggle <b>line wrapping</b>, press <kbd>F2</kbd> (enabled by default)
 
 ## Installation for Offline Use
-<img src="resources/images/hint.gif" width=60px>
+<img src="resources/images/Other/hint.gif" width=60px>
 <i>
 Wanna make websites on your phone? Try installing Web Workshop as a <a href="https://hunterirving.github.io/web_workshop/pages/pwa">Progressive Web App</a>!</i> (You can install it as a desktop app, too...)
 
@@ -73,17 +73,17 @@ Wanna make websites on your phone? Try installing Web Workshop as a <a href="htt
 - [CodeMirror 6](https://codemirror.net/)
 - [GitHub Dark Theme for CodeMirror](https://github.com/fsegurai/codemirror-themes)
 
-<img src="resources/images/bright_idea.gif">
+<img src="resources/images/Other/bright_idea.gif">
 
 ## License
 
 GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
 <br>
-<img src="resources/images/bigN.gif" width=110px>
+<img src="resources/images/Other/bigN.gif" width=110px>
 
 ## Contributing
 
 Feel free to open issues or submit pull requests for improvements!
 
-<img src="resources/images/gaia.gif" width=180px>
+<img src="resources/images/Other/gaia.gif" width=180px>
