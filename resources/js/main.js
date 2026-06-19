@@ -222,14 +222,18 @@ function updatePreview() {
 
 	// Use srcdoc to create a completely fresh document context
 	// Expand <images> tag and rewrite bare stock image filenames
+	// Inject previewChrome via DOM after load (not string concat) so unclosed
+	// user tags like "<a" can't swallow the chrome and dump its CSS as text
 	const processedCode = expandImagesTag(rewriteBareImageSrcs(code.trim())) || '<!DOCTYPE html><html><head></head><body></body></html>';
-	preview.srcdoc = processedCode + previewChrome;
+	preview.srcdoc = processedCode;
 
 	// Add our functionality after the iframe loads
 	const onLoad = () => {
 		try {
 			const doc = preview.contentDocument;
 			if (!doc) return;
+
+			(doc.body || doc.documentElement).insertAdjacentHTML('beforeend', previewChrome);
 
 			// Add click handlers for stock image table rows
 			const stockImageRows = doc.querySelectorAll('.stock-image-row');
