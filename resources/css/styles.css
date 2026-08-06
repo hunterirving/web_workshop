@@ -32,7 +32,7 @@ body {
 	width: 50%;
 	height: 100%;
 	position: relative;
-	transition: opacity 0.1s ease-out; /* Added transition for smoother opacity hack */
+	transition: opacity 0.1s ease-out;
 }
 
 .preview-pane {
@@ -57,10 +57,46 @@ body {
 }
 
 #editor {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	font-size: 21px;
+}
+
+.font-picker-dropdown {
+	position: absolute;
+	z-index: 100;
+	background: #21262d;
+	border: 1px solid #30363d;
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	width: max-content;
+}
+
+.font-picker-dropdown ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	max-height: 260px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: thin;
+	scrollbar-color: #484f58 transparent;
+}
+
+.font-picker-dropdown li {
+	padding: 4px 10px;
+	color: #c9d1d9;
+	font-family: inherit;
+	font-size: 17px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.font-picker-dropdown li.selected {
+	background: #264f78;
+	color: #fff;
 }
 
 /* CodeMirror styling */

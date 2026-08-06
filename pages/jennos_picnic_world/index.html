@@ -19,10 +19,10 @@
 			}
 
 			.main {
-			  position: relative;
-			  width: 100vw;
-			  height: 100vh;
-			  overflow: hidden;
+				position: relative;
+				width: 100vw;
+				height: 100vh;
+				overflow: hidden;
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -33,10 +33,10 @@
 				position: absolute;
 				width: 100vw;
 				height: 100vh;
-			  background-image: url("https://hunterirving.github.io/web_workshop/pages/jennos_picnic_world/images/grass_background.jpeg");
-			  background-repeat: no-repeat;
-			  background-size: cover;
-			  background-position: center center;
+				background-image: url("https://hunterirving.github.io/web_workshop/pages/jennos_picnic_world/images/grass_background.jpeg");
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-position: center center;
 				overflow: hidden;
 			}
 			
@@ -135,82 +135,82 @@
 			}
 
 			.comment-point {
-			  position: absolute;
-			  background-color: white;
-			  width: 3rem;
-			  height: 2rem;
-			  clip-path: polygon(39% 0, 0 30%, 100% 100%);
-			  right: 0;
-			  bottom: 50%;
+				position: absolute;
+				background-color: white;
+				width: 3rem;
+				height: 2rem;
+				clip-path: polygon(39% 0, 0 30%, 100% 100%);
+				right: 0;
+				bottom: 50%;
 			}
 			.comment-point::before,
 			.comment-point::after {
-			  content: '';
-			  position: absolute;
-			  background: black;
-			  width: 3px;
+				content: '';
+				position: absolute;
+				background: black;
+				width: 3px;
 			}
 
 			/* left comment border  */
 			.comment-point::before {
-			  height: 110%;
-			  left: 47%;
-			  top: 7%;
-			  transform: rotate(-64deg);
+				height: 110%;
+				left: 47%;
+				top: 7%;
+				transform: rotate(-64deg);
 			}
 
 			/* right comment border */
 			.comment-point::after {
-			  height: 100%;
-			  right: 22%;
-			  top: 5px;
-			  transform: rotate(-43deg);
+				height: 100%;
+				right: 22%;
+				top: 5px;
+				transform: rotate(-43deg);
 			}
 
 			.half-worm:hover ~ .half-worm-comment {
-			  right: 70px;
+				right: 70px;
 				transition-duration: 1s;
 			}
 			
 			.half-worm:hover ~ .comment-point {
-			  right: 70px;
+				right: 70px;
 				transition-duration: 1s;
 			}
 
 			.picnic-items {
-			  display: grid;
-			  grid-template-columns: repeat(2, 1fr);
-			  grid-auto-rows: 200px;
-			  gap: 1rem;
-			  margin-top: 3rem;
-			  width: 100%;
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				grid-auto-rows: 200px;
+				gap: 1rem;
+				margin-top: 3rem;
+				width: 100%;
 			}
 
 			.picnic-items > * {
-			  display: flex;
-			  align-items: center;
-			  justify-content: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 
 			.picnic-item > p {
-			  position: absolute;
-			  z-index: 100;
-			  display: flex;
-			  align-items: center;
-			  background-color: rgba(255, 255, 255, 0.8);
-			  color: #5AB1BB;
-			  padding: 10px 20px;
-			  height: 30px;
-			  border-radius: 50%;
-			  font-weight: bold;
-			  opacity: 0;
-			  visibility: hidden;
-			  transition: opacity 0.5s ease, visibility 0.5s ease;
+				position: absolute;
+				z-index: 100;
+				display: flex;
+				align-items: center;
+				background-color: rgba(255, 255, 255, 0.8);
+				color: #5AB1BB;
+				padding: 10px 20px;
+				height: 30px;
+				border-radius: 50%;
+				font-weight: bold;
+				opacity: 0;
+				visibility: hidden;
+				transition: opacity 0.5s ease, visibility 0.5s ease;
 			}
 			
 			.picnic-item:hover > p {
-			  opacity: 1;
-			  visibility: visible;
+				opacity: 1;
+				visibility: visible;
 			}
 
 			.picnic-basket {
@@ -236,7 +236,7 @@
 				animation: wiggle 1s infinite;
 			}
 			.bagoot-item > p{
-			  bottom: 35rem;
+				bottom: 35rem;
 			}
 
 			.wine {
@@ -262,7 +262,7 @@
 				width: 90vw;
 				left: 50%;
 				bottom: 30px;
-			  transform: translate(-50%, 30%);
+				transform: translate(-50%, 30%);
 				height: 100px;
 				object-fit: cover;
 			}

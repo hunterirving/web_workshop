@@ -1,22 +1,22 @@
 {
-  "name": "web workshop",
-  "short_name": "web workshop",
-  "description": "craft handmade websites in their natural habitat",
-  "start_url": "/web_workshop/",
-  "display": "standalone",
-  "background_color": "#16181b",
-  "theme_color": "#16181b",
-  "orientation": "any",
-  "icons": [
-    {
-      "src": "resources/icons/construction_padded.png",
-      "sizes": "200x200",
-      "type": "image/png"
-    },
-    {
-      "src": "resources/icons/construction_padded.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+	"name": "web workshop",
+	"short_name": "web workshop",
+	"description": "craft handmade websites in their natural habitat",
+	"start_url": "/web_workshop/",
+	"display": "standalone",
+	"background_color": "#16181b",
+	"theme_color": "#16181b",
+	"orientation": "any",
+	"icons": [
+		{
+			"src": "resources/icons/construction_padded.png",
+			"sizes": "200x200",
+			"type": "image/png"
+		},
+		{
+			"src": "resources/icons/construction_padded.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		}
+	]
 }

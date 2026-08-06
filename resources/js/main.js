@@ -1,6 +1,10 @@
+import { generateFontFaceCSS, getAvailableFontFamilies, preloadAllFonts } from './font-registry.js';
+
 let updateTimer;
 let editorView;
 const preview = document.getElementById('preview');
+
+preloadAllFonts();
 
 // Stock images loaded from manifest - can be referenced by bare filename
 let stockImages = new Map(); // lowercase filename -> path relative to images/
@@ -196,6 +200,18 @@ function updateMainPageTitleAndFavicon(title, favicon) {
 	}
 }
 
+// Inject bundled @font-face declarations at the top of the preview document.
+// Placed right after <head> (rather than appended after load like previewChrome)
+// so fonts are available at parse time and can't be swallowed by unclosed user tags.
+let fontFaceStyle = null;
+function insertFontFaces(html) {
+	if (fontFaceStyle === null) fontFaceStyle = `<style id="web-workshop-fonts">${generateFontFaceCSS()}</style>`;
+	const headMatch = html.match(/<head[^>]*>/i);
+	if (!headMatch) return fontFaceStyle + html;
+	const insertPos = html.indexOf(headMatch[0]) + headMatch[0].length;
+	return html.slice(0, insertPos) + fontFaceStyle + html.slice(insertPos);
+}
+
 function updatePreview() {
 	// Skip preview updates while mobile keyboard is open and editor is focused
 	// This prevents keyboard layer resets on Android
@@ -225,7 +241,8 @@ function updatePreview() {
 	// Inject previewChrome via DOM after load (not string concat) so unclosed
 	// user tags like "<a" can't swallow the chrome and dump its CSS as text
 	const processedCode = expandImagesTag(rewriteBareImageSrcs(code.trim())) || '<!DOCTYPE html><html><head></head><body></body></html>';
-	preview.srcdoc = processedCode;
+	// Bundled @font-face rules go first so user styles still win on everything else
+	preview.srcdoc = insertFontFaces(processedCode);
 
 	// Add our functionality after the iframe loads
 	const onLoad = () => {
@@ -411,6 +428,208 @@ window.loadFile = function() {
 	input.click();
 };
 
+// Font picker dropdown opens when "font-family:" is typed and narrows to
+// what the user types.
+const fontFamilies = getAvailableFontFamilies().sort(compareNatural);
+let fontPickerState = null; // { selectedIndex, originalTail, fonts }
+let applyingFont = false; // suppresses the filter refresh our own edits would trigger
+
+function isInCSSContext(state, pos) {
+	const before = state.doc.sliceString(0, pos);
+
+	// Inside an open <style> block?
+	const styleOpen = before.lastIndexOf('<style');
+	if (styleOpen !== -1 && before.lastIndexOf('</style') < styleOpen) {
+		const tagEnd = before.indexOf('>', styleOpen);
+		if (tagEnd !== -1) return true;
+	}
+
+	// Inside an unterminated style="..." attribute of the tag we're still in?
+	const tagOpen = before.lastIndexOf('<');
+	if (tagOpen === -1) return false;
+	const tagText = before.slice(tagOpen);
+	if (tagText.includes('>')) return false;
+	return /style\s*=\s*(['"])(?:(?!\1)[\s\S])*$/i.test(tagText);
+}
+
+function getFontValueRange(state) {
+	const pos = state.selection.main.head;
+	const line = state.doc.lineAt(pos);
+	const text = line.text;
+	const propMatch = text.match(/font-family:/i);
+	if (!propMatch) return null;
+	// anchorPos is right after "font-family:" (dropdown anchors here)
+	const anchorPos = line.from + propMatch.index + propMatch[0].length;
+	// valueStart skips any whitespace after the colon
+	const afterColon = text.slice(propMatch.index + propMatch[0].length);
+	const leadingSpace = afterColon.match(/^\s*/)[0].length;
+	const valueStart = anchorPos + leadingSpace;
+	// A quoted value runs to its closing quote; an unquoted one stops at the
+	// first ; or " (the latter ends an inline style="..." attribute)
+	const afterValue = text.slice(valueStart - line.from);
+	const endMatch = afterValue.match(/^(?:'[^']*'?|"[^"]*"?|[^;"']*);?/);
+	const valueEnd = valueStart + (endMatch ? endMatch[0].length : 0);
+	return { from: valueStart, to: valueEnd, anchorPos };
+}
+
+// Everything the user typed after "font-family:", including leading whitespace
+function getTypedTail(state) {
+	const range = getFontValueRange(state);
+	return range ? state.doc.sliceString(range.anchorPos, range.to) : '';
+}
+
+function isQuoteClosed(typedTail) {
+	const value = typedTail.trim().replace(/;$/, '').trim();
+	const quote = value[0];
+	return (quote === "'" || quote === '"') && value.length > 1 && value.endsWith(quote);
+}
+
+function matchingFonts(typedTail) {
+	const query = typedTail.replace(/[;'"]/g, '').trim().toLowerCase();
+	if (!query) return fontFamilies;
+	return fontFamilies.filter(font => font.toLowerCase().startsWith(query));
+}
+
+function replaceFontValue(view, from, to, text, cursor) {
+	applyingFont = true;
+	view.dispatch({
+		changes: { from, to, insert: text },
+		selection: { anchor: cursor }
+	});
+	applyingFont = false;
+	// Immediate preview (bypass debounce)
+	clearTimeout(updateTimer);
+	updatePreview();
+}
+
+function applyFont(view, fontName) {
+	const range = getFontValueRange(view.state);
+	if (!range) return;
+	const needsSpace = range.from === range.anchorPos;
+	const text = (needsSpace ? ' ' : '') + `'${fontName}';`;
+	replaceFontValue(view, range.from, range.to, text, range.from + text.length);
+}
+
+// Put back whatever the user had typed before they arrowed into the list
+function restoreTypedValue(view) {
+	const range = getFontValueRange(view.state);
+	if (!range) return;
+	const tail = fontPickerState.originalTail;
+	replaceFontValue(view, range.anchorPos, range.to, tail, range.anchorPos + tail.length);
+}
+
+// Open, re-filter, or dismiss the picker in response to the user's own typing
+function refreshFontPicker(view) {
+	if (applyingFont) return;
+	const range = getFontValueRange(view.state);
+	const pos = view.state.selection.main.head;
+	if (!range || pos < range.anchorPos || pos > range.to || !isInCSSContext(view.state, range.anchorPos)) {
+		closeFontPicker();
+		return;
+	}
+	const typedTail = view.state.doc.sliceString(range.anchorPos, range.to);
+	if (isQuoteClosed(typedTail)) {
+		closeFontPicker();
+		return;
+	}
+	const fonts = matchingFonts(typedTail);
+	if (fonts.length === 0) {
+		closeFontPicker();
+		return;
+	}
+	fontPickerState = { selectedIndex: -1, originalTail: '', fonts };
+	renderFontPicker(view);
+}
+
+function closeFontPicker() {
+	fontPickerState = null;
+	document.querySelector('.font-picker-dropdown')?.remove();
+}
+
+function renderFontPicker(view) {
+	if (!fontPickerState) return;
+
+	let dropdown = document.querySelector('.font-picker-dropdown');
+	if (!dropdown) {
+		dropdown = document.createElement('div');
+		dropdown.className = 'font-picker-dropdown';
+		document.getElementById('editor').appendChild(dropdown);
+	}
+
+	// Position anchored to right after "font-family:"
+	const range = getFontValueRange(view.state);
+	const anchorCoords = range && view.coordsAtPos(range.anchorPos);
+	if (anchorCoords) {
+		const editorRect = view.dom.getBoundingClientRect();
+		dropdown.style.left = `${anchorCoords.left - editorRect.left}px`;
+		dropdown.style.top = `${anchorCoords.bottom - editorRect.top + 4}px`;
+	}
+
+	dropdown.innerHTML = '';
+	const ul = document.createElement('ul');
+	fontPickerState.fonts.forEach((font, i) => {
+		const li = document.createElement('li');
+		li.textContent = font;
+		if (i === fontPickerState.selectedIndex) li.classList.add('selected');
+		li.addEventListener('mousedown', (e) => {
+			e.preventDefault();
+			if (fontPickerState.selectedIndex === -1) {
+				fontPickerState.originalTail = getTypedTail(view.state);
+			}
+			fontPickerState.selectedIndex = i;
+			applyFont(view, font);
+			closeFontPicker();
+		});
+		ul.appendChild(li);
+	});
+	dropdown.appendChild(ul);
+
+	const selectedLi = ul.children[fontPickerState.selectedIndex];
+	if (selectedLi) selectedLi.scrollIntoView({ block: 'nearest' });
+	else ul.scrollTop = 0;
+}
+
+// Tab / Shift-Tab accept a lone match outright, otherwise cycle through the
+// list and wrap at either end. Unlike the arrow keys, cycling never passes back
+// through the user's typed text. The filtered set is kept as-is while cycling.
+function cycleFontPickerSelection(view, delta) {
+	if (!fontPickerState) return false;
+	const fonts = fontPickerState.fonts;
+	if (fontPickerState.selectedIndex === -1) {
+		fontPickerState.originalTail = getTypedTail(view.state);
+	}
+	if (fonts.length === 1) {
+		applyFont(view, fonts[0]);
+		closeFontPicker();
+		return true;
+	}
+	const last = fonts.length - 1;
+	const current = fontPickerState.selectedIndex;
+	fontPickerState.selectedIndex = current === -1
+		? (delta > 0 ? 0 : last)
+		: (current + delta + fonts.length) % fonts.length;
+	applyFont(view, fonts[fontPickerState.selectedIndex]);
+	renderFontPicker(view);
+	return true;
+}
+
+function moveFontPickerSelection(view, delta) {
+	if (!fontPickerState) return false;
+	const newIndex = fontPickerState.selectedIndex + delta;
+	if (newIndex < -1 || newIndex >= fontPickerState.fonts.length) return true;
+	if (fontPickerState.selectedIndex === -1) {
+		fontPickerState.originalTail = getTypedTail(view.state);
+	}
+	fontPickerState.selectedIndex = newIndex;
+	if (newIndex === -1) {
+		restoreTypedValue(view);
+	} else {
+		applyFont(view, fontPickerState.fonts[newIndex]);
+	}
+	renderFontPicker(view);
+	return true;
+}
+
 // Wait for CodeMirror to be available
 function initializeCodeMirror() {
 	if (!window.CodeMirror) {
@@ -445,6 +664,24 @@ function initializeCodeMirror() {
 				search(),
 				closeBrackets(),
 				keymap.of([
+					// Font picker keys (only active when the picker is open)
+					{key: "ArrowDown", run: (view) => moveFontPickerSelection(view, 1)},
+					{key: "ArrowUp", run: (view) => moveFontPickerSelection(view, -1)},
+					// Tab drives the picker when it's open; falls through to indentWithTab otherwise
+					{key: "Tab", run: (view) => cycleFontPickerSelection(view, 1)},
+					{key: "Shift-Tab", run: (view) => cycleFontPickerSelection(view, -1)},
+					{key: "Enter", run: () => {
+						if (!fontPickerState) return false;
+						closeFontPicker();
+						return true;
+					}},
+					{key: "Escape", run: (view) => {
+						if (!fontPickerState) return false;
+						// Escape backs out of a highlighted font, like arrowing all the way up
+						if (fontPickerState.selectedIndex !== -1) restoreTypedValue(view);
+						closeFontPicker();
+						return true;
+					}},
 					{key: "Mod-z", run: undo},
 					{key: "Mod-y", run: redo},
 					{key: "Mod-Shift-z", run: redo},
@@ -502,6 +739,13 @@ function initializeCodeMirror() {
 						clearTimeout(updateTimer);
 						updateTimer = setTimeout(updatePreview, 600);
 						saveToStorage();
+						refreshFontPicker(update.view);
+					}
+					// Close if the cursor moves off the font-family value
+					if (fontPickerState && update.selectionSet && !applyingFont) {
+						const range = getFontValueRange(update.state);
+						const pos = update.state.selection.main.head;
+						if (!range || pos < range.anchorPos || pos > range.to) closeFontPicker();
 					}
 				}),
 				// Disable text correction and autocomplete
@@ -526,6 +770,7 @@ function initializeCodeMirror() {
 
 	editorView.contentDOM.addEventListener('blur', () => {
 		isEditorFocused = false;
+		closeFontPicker();
 
 		// If we are on mobile and the keyboard mode is active,
 		// exit immediately. Do not wait for visualViewport resize.
