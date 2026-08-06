@@ -60,7 +60,7 @@ Alternatively, if you know the name of the image you'd like to use, you can add 
 <img src="resources/images/Other/coffee.gif">
 
 ## Built-in Fonts
-A collection of free fonts is also included. In your CSS (style tag or inline styling), type `font-family:` to preview what's available. Use <kbd>↑</kbd> / <kbd>↓</kbd> to navigate the list, and press <kbd>Enter</kbd> to select the one you want.
+A collection of free fonts is also included. In your CSS (style tag or inline styling), type `font-family:` to preview what's available. Use <kbd>↑</kbd> / <kbd>↓</kbd> to navigate the list, and press <kbd>Enter</kbd> to select the highlighted font.
 
 ```html
 <style>
