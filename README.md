@@ -150,4 +150,4 @@ GPLv3 (see <a href="LICENSE">LICENSE</a> for details).
 
 Feel free to open issues or submit pull requests for improvements!
 
-<img src="resources/images/Other/gaia.gif" width=180px>
+<img src="resources/images/Other/cat_shredding.gif" width=140px>
