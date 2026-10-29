@@ -10,12 +10,7 @@
 	"icons": [
 		{
 			"src": "resources/icons/construction_padded.png",
-			"sizes": "200x200",
-			"type": "image/png"
-		},
-		{
-			"src": "resources/icons/construction_padded.png",
-			"sizes": "192x192",
+			"sizes": "215x215",
 			"type": "image/png"
 		}
 	]
