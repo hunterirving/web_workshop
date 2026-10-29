@@ -43,10 +43,6 @@ body {
 		z-index: 10000;
 		pointer-events: none;
 		background-color: var(--editor-bg);
-		transition: background-color 0.1s linear;
-	}
-	.is-ios body:has(.preview-pane.fullscreen) #status-bar-tint {
-		background-color: white;
 	}
 	.is-ios .preview-pane {
 		padding-top: calc(env(safe-area-inset-top) + var(--status-tint-h));
