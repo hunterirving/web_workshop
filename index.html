@@ -6,6 +6,12 @@
 	<title>Web Workshop</title>
 	<link rel="icon" href="resources/icons/construction.png">
 	<link rel="manifest" href="manifest.json">
+	<script>
+		if (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+			(/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)) {
+			document.documentElement.classList.add("is-ios");
+		}
+	</script>
 	<link rel="stylesheet" href="resources/css/styles.css">
 	<script type="module">
 		import {EditorView, keymap, placeholder, lineNumbers, Decoration, EditorState, Compartment, defaultKeymap, indentWithTab, undo, redo, undoDepth, redoDepth, history, historyKeymap, closeBrackets, closeBracketsKeymap, html, githubDark, indentUnit, search, searchKeymap, closeSearchPanel, openSearchPanel} from "./resources/js/codemirror-bundle.js"
@@ -13,6 +19,8 @@
 	</script>
 </head>
 <body>
+	<div id="status-bar-tint" aria-hidden="true"></div>
+
 	<div class="editor-pane">
 		<div id="editor"></div>
 	</div>

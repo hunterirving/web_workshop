@@ -1,6 +1,7 @@
 :root {
 	--text-color: #f8f8f2;
 	--editor-bg: #16181b;
+	--status-tint-h: 16px;
 	scrollbar-color: grey var(--editor-bg);
 }
 
@@ -26,6 +27,29 @@ body {
 	height: 100%;
 	display: flex;
 	overflow: hidden;
+}
+
+#status-bar-tint {
+	display: none;
+}
+@media (display-mode: standalone) and (orientation: portrait) {
+	.is-ios #status-bar-tint {
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: calc(env(safe-area-inset-top) + var(--status-tint-h));
+		z-index: 10000;
+		pointer-events: none;
+		background-color: var(--editor-bg);
+	}
+	.is-ios body:has(.preview-pane.fullscreen) #status-bar-tint {
+		background-color: white;
+	}
+	.is-ios .preview-pane {
+		padding-top: calc(env(safe-area-inset-top) + var(--status-tint-h));
+	}
 }
 
 .editor-pane {
